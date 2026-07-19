@@ -51,5 +51,16 @@ func getTextures(state string) []string {
 		}
 
 	}
+
+	if state == "dash" {
+		return []string{
+			"./res/fighter_sprites/fighter_dash_0033.png",
+			"./res/fighter_sprites/fighter_dash_0034.png",
+			"./res/fighter_sprites/fighter_dash_0035.png",
+			"./res/fighter_sprites/fighter_dash_0036.png",
+			"./res/fighter_sprites/fighter_dash_0037.png",
+			"./res/fighter_sprites/fighter_dash_0038.png",
+		}
+	}
 	return []string{}
 }

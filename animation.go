@@ -10,6 +10,7 @@ type SpriteAnimation struct {
 	CurrentFrame  int
 	FrameDuration float32
 	Timer         float32
+	Rect          rl.Rectangle
 	Src           rl.Rectangle
 	Dst           rl.Rectangle
 }
@@ -34,7 +35,7 @@ func (s *SpriteAnimation) Update(
 
 	s.Src = src
 
-	dst := player.Rect
+	dst := s.Rect
 	if s.Timer >= s.FrameDuration {
 		s.CurrentFrame = (s.CurrentFrame + 1) % len(s.StateTextures[s.CurrentState])
 		s.Timer = 0

@@ -6,7 +6,6 @@ import (
 
 type Player struct {
 	Position        rl.Vector2
-	Rect            rl.Rectangle
 	Speed           float32
 	FacingRight     bool
 	HorSpeed        float32
@@ -15,12 +14,22 @@ type Player struct {
 }
 
 func (p *Player) Update(delta float32) {
-	if rl.IsKeyDown(rl.KeyD) {
+	if rl.IsKeyDown(rl.KeyD) && rl.IsKeyDown(rl.KeyLeftShift) {
+		p.FacingRight = true
+		p.HorSpeed = hor_speed * 2
+		p.SpriteAnimation.CurrentState = "run"
+	} else if rl.IsKeyDown(rl.KeyD) {
 		p.FacingRight = true
 		p.HorSpeed = hor_speed
 		p.SpriteAnimation.CurrentState = "walk"
+	} else {
+		p.SpriteAnimation.CurrentState = "walk"
 	}
-	if rl.IsKeyDown(rl.KeyA) {
+	if rl.IsKeyDown(rl.KeyA) && rl.IsKeyDown(rl.KeyLeftShift) {
+		p.SpriteAnimation.CurrentState = "run"
+		p.FacingRight = false
+		p.HorSpeed = -hor_speed * 2
+	} else if rl.IsKeyDown(rl.KeyA) {
 		p.SpriteAnimation.CurrentState = "walk"
 		p.FacingRight = false
 		p.HorSpeed = -hor_speed
@@ -47,8 +56,8 @@ func (p *Player) Update(delta float32) {
 
 	p.Speed += gravity * delta
 	p.Position.Y += p.Speed * delta
-	p.Rect.X = p.Position.X - p.Rect.Width/2
-	p.Rect.Y = p.Position.Y - p.Rect.Height
+	p.SpriteAnimation.Rect.X = p.Position.X - p.SpriteAnimation.Rect.Width/2
+	p.SpriteAnimation.Rect.Y = p.Position.Y - p.SpriteAnimation.Rect.Height
 
 	if p.Position.Y >= float32(floor) {
 		p.Position.Y = float32(floor)

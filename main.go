@@ -34,8 +34,8 @@ func main() {
 		},
 	}
 	player.SpriteAnimation.Load()
-	player.Rect.Width = 512 / 2
-	player.Rect.Height = 512 / 2
+	player.SpriteAnimation.Rect.Width = 512 / 2
+	player.SpriteAnimation.Rect.Height = 512 / 2
 	player.Speed = gravity
 
 	rl.SetTargetFPS(60)
@@ -61,6 +61,7 @@ func main() {
 			rl.White,
 		)
 		rl.DrawCircleV(player.Position, 3, rl.Pink)
+		rl.DrawFPS(20, 20)
 
 		rl.EndDrawing()
 	}
