@@ -43,11 +43,11 @@ func getTextures(state string) []string {
 
 	if state == "jump" {
 		return []string{
-			"./res/fighter_sprites/fighter_jump_0043.png",
+			// "./res/fighter_sprites/fighter_jump_0043.png",
 			"./res/fighter_sprites/fighter_jump_0044.png",
-			"./res/fighter_sprites/fighter_jump_0045.png",
-			"./res/fighter_sprites/fighter_jump_0046.png",
-			"./res/fighter_sprites/fighter_jump_0047.png",
+			// "./res/fighter_sprites/fighter_jump_0045.png",
+			// "./res/fighter_sprites/fighter_jump_0046.png",
+			// "./res/fighter_sprites/fighter_jump_0047.png",
 		}
 
 	}

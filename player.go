@@ -6,63 +6,78 @@ import (
 
 type Player struct {
 	Position        rl.Vector2
-	Speed           float32
+	JumpSpeed       float32
 	FacingRight     bool
 	HorSpeed        float32
 	SpriteAnimation *SpriteAnimation
 	CanJump         bool
+	Gravity         float32
+	DragSpeed       float32
 }
 
 func (p *Player) Update(delta float32) {
 	if rl.IsKeyDown(rl.KeyD) && rl.IsKeyDown(rl.KeyLeftShift) {
 		p.FacingRight = true
 		p.HorSpeed = hor_speed * 2
-		p.SpriteAnimation.CurrentState = "run"
-	} else if rl.IsKeyDown(rl.KeyD) {
+		if p.JumpSpeed == 0 {
+			p.SpriteAnimation.CurrentState = "run"
+		}
+	} else if rl.IsKeyDown(rl.KeyD) && p.JumpSpeed == 0 {
 		p.FacingRight = true
 		p.HorSpeed = hor_speed
-		p.SpriteAnimation.CurrentState = "walk"
-	} else {
-		p.SpriteAnimation.CurrentState = "walk"
+		if p.JumpSpeed == 0 {
+			p.SpriteAnimation.CurrentState = "walk"
+		}
+	} else if p.CanJump {
+		if p.JumpSpeed == 0 {
+			p.SpriteAnimation.CurrentState = "walk"
+		}
 	}
 	if rl.IsKeyDown(rl.KeyA) && rl.IsKeyDown(rl.KeyLeftShift) {
-		p.SpriteAnimation.CurrentState = "run"
 		p.FacingRight = false
 		p.HorSpeed = -hor_speed * 2
+		if p.JumpSpeed == 0 {
+			p.SpriteAnimation.CurrentState = "run"
+		}
 	} else if rl.IsKeyDown(rl.KeyA) {
-		p.SpriteAnimation.CurrentState = "walk"
 		p.FacingRight = false
 		p.HorSpeed = -hor_speed
+		if p.JumpSpeed == 0 {
+			p.SpriteAnimation.CurrentState = "walk"
+		}
 	}
 	if p.FacingRight {
 		p.Position.X += p.HorSpeed * delta
-		p.HorSpeed += drag_speed * delta
+		p.HorSpeed += p.DragSpeed * delta
 		if p.HorSpeed <= 0 {
 			p.HorSpeed = 0
-			p.SpriteAnimation.CurrentState = "idle"
 		}
 	} else {
 		p.Position.X += p.HorSpeed * delta
-		p.HorSpeed += -1 * drag_speed * delta
+		p.HorSpeed += -1 * p.DragSpeed * delta
 		if p.HorSpeed >= 0 {
 			p.HorSpeed = 0
-			p.SpriteAnimation.CurrentState = "idle"
 		}
 	}
 	if rl.IsKeyPressed(rl.KeySpace) && p.CanJump {
-		p.Speed = jump_speed
+		p.SpriteAnimation.CurrentFrame = 0
+		p.SpriteAnimation.CurrentState = "jump"
+		p.JumpSpeed = jump_speed
 		p.CanJump = false
 	}
 
-	p.Speed += gravity * delta
-	p.Position.Y += p.Speed * delta
+	p.JumpSpeed += p.Gravity * delta
+	p.Position.Y += p.JumpSpeed * delta
 	p.SpriteAnimation.Rect.X = p.Position.X - p.SpriteAnimation.Rect.Width/2
 	p.SpriteAnimation.Rect.Y = p.Position.Y - p.SpriteAnimation.Rect.Height
 
 	if p.Position.Y >= float32(floor) {
 		p.Position.Y = float32(floor)
-		gravity = 900
-		p.Speed = 0
+		p.Gravity = 900
+		p.JumpSpeed = 0
 		p.CanJump = true
+		if p.HorSpeed == 0 {
+			p.SpriteAnimation.CurrentState = "idle"
+		}
 	}
 }

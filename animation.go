@@ -46,7 +46,7 @@ func (s *SpriteAnimation) Update(
 }
 
 func (s *SpriteAnimation) Load() {
-	states := []string{"idle", "walk", "run", "jump"}
+	states := []string{"idle", "walk", "run", "jump", "dash"}
 	for _, state := range states {
 		paths := getTextures(state)
 		var tex []rl.Texture2D
@@ -54,5 +54,14 @@ func (s *SpriteAnimation) Load() {
 			tex = append(tex, rl.LoadTexture(v))
 		}
 		s.StateTextures[state] = tex
+	}
+}
+
+func (s *SpriteAnimation) Unload() {
+	states := []string{"idle", "walk", "run", "jump", "dash"}
+	for _, state := range states {
+		for _, tex := range s.StateTextures[state] {
+			rl.UnloadTexture(tex)
+		}
 	}
 }
