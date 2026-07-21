@@ -16,10 +16,14 @@ func main() {
 	rl.SetConfigFlags(rl.FlagWindowHighdpi)
 
 	rl.InitWindow(width, height, "platformer")
+	envItems := []EnvironmentItem{
+		{Rect: rl.NewRectangle(50, 380, 150, 10), Color: rl.Black},
+		{Rect: rl.NewRectangle(350, 320, 150, 10), Color: rl.Black},
+	}
 
 	player := Player{
 		Position:    rl.NewVector2(float32(width)/2, float32(height)/2),
-		CanJump:     false,
+		Grounded:    false,
 		Gravity:     200,
 		DragSpeed:   -340,
 		FacingRight: true,
@@ -29,7 +33,8 @@ func main() {
 			FrameDuration: 0.099,
 			Timer:         0,
 			Rect:          rl.NewRectangle(0, 0, 512/2, 512/2),
-			CurrentState:  "idle",
+			CurrentState:  "jump",
+			FramePinned:   true,
 		},
 	}
 	player.SpriteAnimation.Load()
@@ -43,7 +48,7 @@ func main() {
 
 	for !rl.WindowShouldClose() {
 		delta := rl.GetFrameTime()
-		player.Update(delta)
+		player.Update(delta, envItems)
 		player.SpriteAnimation.Update(delta, &player)
 		spriteCurrentState := player.SpriteAnimation.CurrentState
 		currentFrame := player.SpriteAnimation.CurrentFrame
@@ -52,13 +57,16 @@ func main() {
 		rl.BeginDrawing()
 		rl.ClearBackground(rl.Gray)
 
+		for _, ei := range envItems {
+			rl.DrawRectangleRec(ei.Rect, ei.Color)
+		}
 		rl.DrawTexturePro(
 			currentTex[currentFrame],
 			player.SpriteAnimation.Src,
 			player.SpriteAnimation.Dst,
 			rl.Vector2{},
 			0,
-			rl.Red,
+			rl.White,
 		)
 		rl.DrawCircleV(player.Position, 3, rl.Pink)
 		rl.DrawFPS(20, 20)

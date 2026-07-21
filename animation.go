@@ -8,6 +8,7 @@ type SpriteAnimation struct {
 	CurrentState  string
 	StateTextures map[string][]rl.Texture2D
 	CurrentFrame  int
+	FramePinned   bool
 	FrameDuration float32
 	Timer         float32
 	Rect          rl.Rectangle
@@ -36,13 +37,12 @@ func (s *SpriteAnimation) Update(
 	s.Src = src
 
 	dst := s.Rect
-	if s.Timer >= s.FrameDuration {
+	if !s.FramePinned && s.Timer >= s.FrameDuration {
 		s.CurrentFrame = (s.CurrentFrame + 1) % len(s.StateTextures[s.CurrentState])
 		s.Timer = 0
 	}
 	dst.Y += 66
 	s.Dst = dst
-
 }
 
 func (s *SpriteAnimation) Load() {
