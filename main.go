@@ -52,7 +52,7 @@ func main() {
 		player.SpriteAnimation.Update(delta, &player)
 		spriteCurrentState := player.SpriteAnimation.CurrentState
 		currentFrame := player.SpriteAnimation.CurrentFrame
-		currentTex := player.SpriteAnimation.StateTextures[spriteCurrentState]
+		animationState := player.SpriteAnimation.StateTextures[spriteCurrentState]
 
 		rl.BeginDrawing()
 		rl.ClearBackground(rl.Gray)
@@ -60,8 +60,9 @@ func main() {
 		for _, ei := range envItems {
 			rl.DrawRectangleRec(ei.Rect, ei.Color)
 		}
+
 		rl.DrawTexturePro(
-			currentTex[currentFrame],
+			animationState[currentFrame],
 			player.SpriteAnimation.Src,
 			player.SpriteAnimation.Dst,
 			rl.Vector2{},

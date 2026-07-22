@@ -31,10 +31,6 @@ func (p *Player) Update(
 		if p.JumpSpeed == 0 {
 			p.SpriteAnimation.CurrentState = "walk"
 		}
-	} else if p.Grounded {
-		if p.JumpSpeed == 0 {
-			p.SpriteAnimation.CurrentState = "walk"
-		}
 	}
 	if rl.IsKeyDown(rl.KeyA) && rl.IsKeyDown(rl.KeyLeftShift) {
 		p.FacingRight = false
@@ -60,6 +56,13 @@ func (p *Player) Update(
 		p.HorSpeed += -1 * p.DragSpeed * delta
 		if p.HorSpeed >= 0 {
 			p.HorSpeed = 0
+		}
+	}
+	if p.Grounded {
+		if p.HorSpeed == 0 && p.JumpSpeed == 0 {
+			p.SpriteAnimation.CurrentState = "idle"
+		} else if !rl.IsKeyDown(rl.KeyD) && !rl.IsKeyDown(rl.KeyA) && p.HorSpeed != 0 {
+			p.SpriteAnimation.CurrentState = "walk"
 		}
 	}
 	if rl.IsKeyPressed(rl.KeySpace) && p.Grounded {
@@ -88,9 +91,6 @@ func (p *Player) Update(
 }
 
 func (p *Player) OnGrounded(envItems []EnvironmentItem) {
-	if p.HorSpeed == 0 {
-		p.SpriteAnimation.CurrentState = "idle"
-	}
 	if p.Position.Y >= float32(floor) {
 		p.JumpSpeed = 0
 		p.Position.Y = float32(floor)
@@ -112,7 +112,6 @@ func (p *Player) OnGrounded(envItems []EnvironmentItem) {
 			p.SpriteAnimation.FramePinned = false
 			p.Gravity = 900
 			p.SpriteAnimation.FrameDuration = 0.099
-
 		}
 	}
 }
