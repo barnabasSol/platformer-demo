@@ -14,6 +14,7 @@ type SpriteAnimation struct {
 	Rect          rl.Rectangle
 	Src           rl.Rectangle
 	Dst           rl.Rectangle
+	OneShot       bool
 }
 
 func (s *SpriteAnimation) Update(

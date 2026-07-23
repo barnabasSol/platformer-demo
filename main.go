@@ -18,15 +18,15 @@ func main() {
 	rl.InitWindow(width, height, "platformer")
 	envItems := []EnvironmentItem{
 		{Rect: rl.NewRectangle(50, 380, 150, 10), Color: rl.Black},
-		{Rect: rl.NewRectangle(350, 320, 150, 10), Color: rl.Black},
+		{Rect: rl.NewRectangle(260, 320, 170, 10), Color: rl.Black},
 	}
 
 	player := Player{
-		Position:    rl.NewVector2(float32(width)/2, float32(height)/2),
-		Grounded:    false,
-		Gravity:     200,
-		DragSpeed:   -340,
-		FacingRight: true,
+		FootPosition: rl.NewVector2(float32(width)/2, float32(height)/2),
+		Grounded:     false,
+		Gravity:      200,
+		DragSpeed:    -340,
+		FacingRight:  true,
 		SpriteAnimation: &SpriteAnimation{
 			StateTextures: map[string][]rl.Texture2D{},
 			CurrentFrame:  0,
@@ -48,11 +48,13 @@ func main() {
 
 	for !rl.WindowShouldClose() {
 		delta := rl.GetFrameTime()
+
 		player.Update(delta, envItems)
 		player.SpriteAnimation.Update(delta, &player)
+
 		spriteCurrentState := player.SpriteAnimation.CurrentState
 		currentFrame := player.SpriteAnimation.CurrentFrame
-		animationState := player.SpriteAnimation.StateTextures[spriteCurrentState]
+		currentTex := player.SpriteAnimation.StateTextures[spriteCurrentState]
 
 		rl.BeginDrawing()
 		rl.ClearBackground(rl.Gray)
@@ -60,16 +62,15 @@ func main() {
 		for _, ei := range envItems {
 			rl.DrawRectangleRec(ei.Rect, ei.Color)
 		}
-
 		rl.DrawTexturePro(
-			animationState[currentFrame],
+			currentTex[currentFrame],
 			player.SpriteAnimation.Src,
 			player.SpriteAnimation.Dst,
 			rl.Vector2{},
 			0,
 			rl.White,
 		)
-		rl.DrawCircleV(player.Position, 3, rl.Pink)
+		rl.DrawCircleV(player.FootPosition, 3, rl.Pink)
 		rl.DrawFPS(20, 20)
 
 		rl.EndDrawing()
