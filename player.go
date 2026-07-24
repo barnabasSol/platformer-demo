@@ -19,9 +19,11 @@ func (p *Player) Update(
 	delta float32,
 	envItems []EnvironmentItem,
 ) {
-	if p.JumpSpeed > 0 {
+	if p.JumpSpeed != 0 {
+		p.SpriteAnimation.FramePinned = false
 		p.Grounded = false
-		if p.SpriteAnimation.CurrentState != "dash" {
+		if p.SpriteAnimation.CurrentState != "dash" &&
+			p.SpriteAnimation.CurrentState != "combo1" {
 			p.SpriteAnimation.CurrentState = "jump"
 		}
 	}
@@ -37,12 +39,14 @@ func (p *Player) Update(
 			}
 		}
 
-		if rl.IsKeyDown(rl.KeyJ) {
+		if rl.IsKeyPressed(rl.KeyJ) {
 			p.SpriteAnimation.OneShot = true
 			p.SpriteAnimation.CurrentState = "combo1"
 			p.SpriteAnimation.CurrentFrame = 0
 		}
-		if rl.IsKeyDown(rl.KeyD) && rl.IsKeyDown(rl.KeyLeftShift) && !rl.IsKeyDown(rl.KeyL) {
+		if rl.IsKeyDown(rl.KeyD) &&
+			rl.IsKeyDown(rl.KeyLeftShift) &&
+			!rl.IsKeyDown(rl.KeyL) {
 			p.FacingRight = true
 			p.HorSpeed = hor_speed * 2
 			if p.JumpSpeed == 0 {
@@ -55,7 +59,9 @@ func (p *Player) Update(
 				p.SpriteAnimation.CurrentState = "walk"
 			}
 		}
-		if rl.IsKeyDown(rl.KeyA) && rl.IsKeyDown(rl.KeyLeftShift) && !rl.IsKeyDown(rl.KeyL) {
+		if rl.IsKeyDown(rl.KeyA) &&
+			rl.IsKeyDown(rl.KeyLeftShift) &&
+			!rl.IsKeyDown(rl.KeyL) {
 			p.FacingRight = false
 			p.HorSpeed = -hor_speed * 2
 			if p.JumpSpeed == 0 {
