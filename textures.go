@@ -1,7 +1,6 @@
 package main
 
 func getTextures(state string) []string {
-
 	if state == "idle" {
 		return []string{
 			"./res/fighter_sprites/fighter_Idle_0001.png",
@@ -60,6 +59,15 @@ func getTextures(state string) []string {
 			"./res/fighter_sprites/fighter_dash_0036.png",
 			"./res/fighter_sprites/fighter_dash_0037.png",
 			"./res/fighter_sprites/fighter_dash_0038.png",
+		}
+	}
+	if state == "combo1" {
+		return []string{
+			"./res/fighter_sprites/fighter_combo_0064.png",
+			"./res/fighter_sprites/fighter_combo_0065.png",
+			"./res/fighter_sprites/fighter_combo_0066.png",
+			"./res/fighter_sprites/fighter_combo_0067.png",
+			"./res/fighter_sprites/fighter_combo_0068.png",
 		}
 	}
 	return []string{}

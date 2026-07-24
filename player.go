@@ -31,10 +31,16 @@ func (p *Player) Update(
 			p.SpriteAnimation.CurrentFrame = 0
 			p.SpriteAnimation.CurrentState = "dash"
 			if p.FacingRight {
-				p.HorSpeed = hor_speed * 4
+				p.HorSpeed = hor_speed * 3.5
 			} else {
-				p.HorSpeed = -hor_speed * 4
+				p.HorSpeed = -hor_speed * 3.5
 			}
+		}
+
+		if rl.IsKeyDown(rl.KeyJ) {
+			p.SpriteAnimation.OneShot = true
+			p.SpriteAnimation.CurrentState = "combo1"
+			p.SpriteAnimation.CurrentFrame = 0
 		}
 		if rl.IsKeyDown(rl.KeyD) && rl.IsKeyDown(rl.KeyLeftShift) && !rl.IsKeyDown(rl.KeyL) {
 			p.FacingRight = true
@@ -62,12 +68,13 @@ func (p *Player) Update(
 				p.SpriteAnimation.CurrentState = "walk"
 			}
 		}
-
-		if rl.IsKeyPressed(rl.KeySpace) && p.Grounded {
-			p.SpriteAnimation.CurrentState = "jump"
+	}
+	if rl.IsKeyPressed(rl.KeySpace) && p.Grounded {
+		p.SpriteAnimation.CurrentState = "jump"
+		if p.SpriteAnimation.CurrentState != "dash" {
 			p.JumpSpeed = jump_speed
-			p.Grounded = false
 		}
+		p.Grounded = false
 	}
 	if p.FacingRight {
 		p.FootPosition.X += p.HorSpeed * delta
@@ -82,13 +89,10 @@ func (p *Player) Update(
 			p.HorSpeed = 0
 		}
 	}
-	if p.SpriteAnimation.OneShot &&
-		p.SpriteAnimation.CurrentFrame == len(p.SpriteAnimation.StateTextures[p.SpriteAnimation.CurrentState])-1 {
-		p.SpriteAnimation.OneShot = false
-		p.SpriteAnimation.CurrentState = "walk"
-	}
 
-	if !p.Grounded && p.SpriteAnimation.CurrentState != "dash" {
+	if !p.Grounded &&
+		p.SpriteAnimation.CurrentState != "dash" &&
+		p.SpriteAnimation.CurrentState != "combo1" {
 		p.SpriteAnimation.FramePinned = true
 		if p.JumpSpeed > 0 {
 			p.SpriteAnimation.CurrentFrame = 4
@@ -97,7 +101,8 @@ func (p *Player) Update(
 		}
 	}
 
-	if p.SpriteAnimation.CurrentState != "dash" {
+	if p.SpriteAnimation.CurrentState != "dash" &&
+		p.SpriteAnimation.CurrentState != "combo1" {
 		if p.Grounded {
 			if p.HorSpeed == 0 && p.JumpSpeed == 0 {
 				p.SpriteAnimation.CurrentState = "idle"
@@ -117,7 +122,7 @@ func (p *Player) Update(
 }
 
 func (p *Player) OnGrounded(envItems []EnvironmentItem) {
-	if p.HorSpeed == 0 && p.Grounded {
+	if p.HorSpeed == 0 && p.Grounded && !p.SpriteAnimation.OneShot {
 		p.SpriteAnimation.CurrentState = "idle"
 	}
 	if p.FootPosition.Y >= float32(floor) {

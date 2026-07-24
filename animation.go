@@ -39,15 +39,22 @@ func (s *SpriteAnimation) Update(
 
 	dst := s.Rect
 	if !s.FramePinned && s.Timer >= s.FrameDuration {
-		s.CurrentFrame = (s.CurrentFrame + 1) % len(s.StateTextures[s.CurrentState])
-		s.Timer = 0
+		if s.OneShot &&
+			s.CurrentFrame == len(s.StateTextures[s.CurrentState])-1 {
+			s.OneShot = false
+			s.CurrentState = "idle"
+			println("oh god please reeach here")
+		} else {
+			s.CurrentFrame = (s.CurrentFrame + 1) % len(s.StateTextures[s.CurrentState])
+			s.Timer = 0
+		}
 	}
 	dst.Y += 66
 	s.Dst = dst
 }
 
 func (s *SpriteAnimation) Load() {
-	states := []string{"idle", "walk", "run", "jump", "dash"}
+	states := []string{"idle", "walk", "run", "jump", "dash", "combo1"}
 	for _, state := range states {
 		paths := getTextures(state)
 		var tex []rl.Texture2D
@@ -59,7 +66,7 @@ func (s *SpriteAnimation) Load() {
 }
 
 func (s *SpriteAnimation) Unload() {
-	states := []string{"idle", "walk", "run", "jump", "dash"}
+	states := []string{"idle", "walk", "run", "jump", "dash", "combo1"}
 	for _, state := range states {
 		for _, tex := range s.StateTextures[state] {
 			rl.UnloadTexture(tex)
