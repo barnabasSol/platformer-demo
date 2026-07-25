@@ -18,6 +18,25 @@ type Player struct {
 	DragSpeed         float32
 	ComboCounter      int
 	ComboResetCounter float32
+	NextComboQueued   bool
+}
+
+func (p *Player) startCombo() {
+	p.ComboCounter += 1
+	if p.ComboCounter > 3 {
+		p.ComboCounter = 1
+		p.ComboResetCounter = 0
+	}
+	if p.ComboResetCounter <= 0 {
+		p.ComboCounter = 1
+		p.ComboResetCounter += 5
+	}
+	if p.ComboResetCounter < 3 {
+		p.ComboResetCounter += 5
+	}
+	p.SpriteAnimation.CurrentFrame = 0
+	p.SpriteAnimation.CurrentState = "combo" + strconv.Itoa(p.ComboCounter)
+	p.SpriteAnimation.OneShot = true
 }
 
 func (p *Player) Update(
@@ -52,21 +71,13 @@ func (p *Player) Update(
 			}
 		}
 		if rl.IsKeyPressed(rl.KeyJ) {
-			p.ComboCounter += 1
-			if p.ComboCounter > 3 {
-				p.ComboCounter = 1
-				p.ComboResetCounter = 0
+			if p.SpriteAnimation.CurrentState == "combo1" ||
+				p.SpriteAnimation.CurrentState == "combo2" ||
+				p.SpriteAnimation.CurrentState == "combo3" {
+				p.NextComboQueued = true
+			} else {
+				p.startCombo()
 			}
-			if p.ComboResetCounter <= 0 {
-				p.ComboCounter = 1
-				p.ComboResetCounter += 5
-			}
-			if p.ComboResetCounter < 3 {
-				p.ComboResetCounter += 5
-			}
-			p.SpriteAnimation.CurrentFrame = 0
-			p.SpriteAnimation.CurrentState = "combo" + strconv.Itoa(p.ComboCounter)
-			p.SpriteAnimation.OneShot = true
 		}
 		if rl.IsKeyDown(rl.KeyD) &&
 			rl.IsKeyDown(rl.KeyLeftShift) &&

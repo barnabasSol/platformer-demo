@@ -42,7 +42,12 @@ func (s *SpriteAnimation) Update(
 		if s.OneShot &&
 			s.CurrentFrame == len(s.StateTextures[s.CurrentState])-1 {
 			s.OneShot = false
-			s.CurrentState = "idle"
+			if player.NextComboQueued {
+				player.NextComboQueued = false
+				player.startCombo()
+			} else {
+				s.CurrentState = "idle"
+			}
 		} else {
 			s.CurrentFrame = (s.CurrentFrame + 1) % len(s.StateTextures[s.CurrentState])
 			s.Timer = 0
