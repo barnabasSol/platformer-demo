@@ -2,6 +2,7 @@ package main
 
 import (
 	"strconv"
+	"strings"
 
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
@@ -69,13 +70,16 @@ func (p *Player) Update(
 		}
 		if rl.IsKeyDown(rl.KeyD) &&
 			rl.IsKeyDown(rl.KeyLeftShift) &&
-			!rl.IsKeyDown(rl.KeyL) {
+			!rl.IsKeyDown(rl.KeyL) &&
+			!strings.HasPrefix(p.SpriteAnimation.CurrentState, "combo") {
 			p.FacingRight = true
 			p.HorSpeed = hor_speed * 2
 			if p.JumpSpeed == 0 {
 				p.SpriteAnimation.CurrentState = "run"
 			}
-		} else if rl.IsKeyDown(rl.KeyD) && !rl.IsKeyDown(rl.KeyL) {
+		} else if rl.IsKeyDown(rl.KeyD) &&
+			!rl.IsKeyDown(rl.KeyL) &&
+			!strings.HasPrefix(p.SpriteAnimation.CurrentState, "combo") {
 			p.FacingRight = true
 			p.HorSpeed = hor_speed
 			if p.JumpSpeed == 0 {
@@ -84,13 +88,16 @@ func (p *Player) Update(
 		}
 		if rl.IsKeyDown(rl.KeyA) &&
 			rl.IsKeyDown(rl.KeyLeftShift) &&
-			!rl.IsKeyDown(rl.KeyL) {
+			!rl.IsKeyDown(rl.KeyL) &&
+			!strings.HasPrefix(p.SpriteAnimation.CurrentState, "combo") {
 			p.FacingRight = false
 			p.HorSpeed = -hor_speed * 2
 			if p.JumpSpeed == 0 {
 				p.SpriteAnimation.CurrentState = "run"
 			}
-		} else if rl.IsKeyDown(rl.KeyA) && !rl.IsKeyDown(rl.KeyL) {
+		} else if rl.IsKeyDown(rl.KeyA) &&
+			!rl.IsKeyDown(rl.KeyL) &&
+			!strings.HasPrefix(p.SpriteAnimation.CurrentState, "combo") {
 			p.FacingRight = false
 			p.HorSpeed = -hor_speed
 			if p.JumpSpeed == 0 {

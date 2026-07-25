@@ -57,7 +57,7 @@ func main() {
 		currentTex := player.SpriteAnimation.StateTextures[spriteCurrentState]
 
 		rl.BeginDrawing()
-		rl.ClearBackground(rl.Pink)
+		rl.ClearBackground(rl.Brown)
 
 		for _, ei := range envItems {
 			rl.DrawRectangleRec(ei.Rect, ei.Color)
