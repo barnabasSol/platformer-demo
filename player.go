@@ -1,29 +1,42 @@
 package main
 
 import (
+	"fmt"
+	"strconv"
+
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
 
 type Player struct {
-	FootPosition    rl.Vector2
-	JumpSpeed       float32
-	FacingRight     bool
-	HorSpeed        float32
-	SpriteAnimation *SpriteAnimation
-	Grounded        bool
-	Gravity         float32
-	DragSpeed       float32
+	FootPosition      rl.Vector2
+	JumpSpeed         float32
+	FacingRight       bool
+	HorSpeed          float32
+	SpriteAnimation   *SpriteAnimation
+	Grounded          bool
+	Gravity           float32
+	DragSpeed         float32
+	ComboCounter      int
+	ComboResetCounter float32
 }
 
 func (p *Player) Update(
 	delta float32,
 	envItems []EnvironmentItem,
 ) {
+	p.ComboResetCounter -= .13
+	if p.ComboResetCounter <= 0 {
+		p.ComboCounter = 0
+		p.ComboResetCounter = 0
+	}
+	fmt.Printf("p.ComboResetCounter: %v\n", p.ComboResetCounter)
 	if p.JumpSpeed != 0 {
 		p.SpriteAnimation.FramePinned = false
 		p.Grounded = false
 		if p.SpriteAnimation.CurrentState != "dash" &&
-			p.SpriteAnimation.CurrentState != "combo1" {
+			p.SpriteAnimation.CurrentState != "combo1" &&
+			p.SpriteAnimation.CurrentState != "combo2" &&
+			p.SpriteAnimation.CurrentState != "combo3" {
 			p.SpriteAnimation.CurrentState = "jump"
 		}
 	}
@@ -40,9 +53,21 @@ func (p *Player) Update(
 		}
 
 		if rl.IsKeyPressed(rl.KeyJ) {
-			p.SpriteAnimation.OneShot = true
-			p.SpriteAnimation.CurrentState = "combo1"
+			p.ComboCounter += 1
+			if p.ComboCounter > 3 {
+				p.ComboCounter = 1
+				p.ComboResetCounter = 0
+			}
+			if p.ComboResetCounter <= 0 {
+				p.ComboCounter = 1
+				p.ComboResetCounter += 5
+			}
+			if p.ComboResetCounter < 3 {
+				p.ComboResetCounter += 5
+			}
 			p.SpriteAnimation.CurrentFrame = 0
+			p.SpriteAnimation.OneShot = true
+			p.SpriteAnimation.CurrentState = "combo" + strconv.FormatInt(int64(p.ComboCounter), 10)
 		}
 		if rl.IsKeyDown(rl.KeyD) &&
 			rl.IsKeyDown(rl.KeyLeftShift) &&
@@ -98,7 +123,9 @@ func (p *Player) Update(
 
 	if !p.Grounded &&
 		p.SpriteAnimation.CurrentState != "dash" &&
-		p.SpriteAnimation.CurrentState != "combo1" {
+		p.SpriteAnimation.CurrentState != "combo1" &&
+		p.SpriteAnimation.CurrentState != "combo2" &&
+		p.SpriteAnimation.CurrentState != "combo3" {
 		p.SpriteAnimation.FramePinned = true
 		if p.JumpSpeed > 0 {
 			p.SpriteAnimation.CurrentFrame = 4
@@ -108,7 +135,9 @@ func (p *Player) Update(
 	}
 
 	if p.SpriteAnimation.CurrentState != "dash" &&
-		p.SpriteAnimation.CurrentState != "combo1" {
+		p.SpriteAnimation.CurrentState != "combo1" &&
+		p.SpriteAnimation.CurrentState != "combo2" &&
+		p.SpriteAnimation.CurrentState != "combo3" {
 		if p.Grounded {
 			if p.HorSpeed == 0 && p.JumpSpeed == 0 {
 				p.SpriteAnimation.CurrentState = "idle"

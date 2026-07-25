@@ -70,5 +70,26 @@ func getTextures(state string) []string {
 			"./res/fighter_sprites/fighter_combo_0068.png",
 		}
 	}
+	if state == "combo2" {
+		return []string{
+			"./res/fighter_sprites/fighter_combo_0069.png",
+			"./res/fighter_sprites/fighter_combo_0070.png",
+			"./res/fighter_sprites/fighter_combo_0071.png",
+			"./res/fighter_sprites/fighter_combo_0072.png",
+			"./res/fighter_sprites/fighter_combo_0073.png",
+			"./res/fighter_sprites/fighter_combo_0074.png",
+			"./res/fighter_sprites/fighter_combo_0075.png",
+		}
+	}
+	if state == "combo3" {
+		return []string{
+			"./res/fighter_sprites/fighter_combo_0076.png",
+			"./res/fighter_sprites/fighter_combo_0077.png",
+			"./res/fighter_sprites/fighter_combo_0078.png",
+			"./res/fighter_sprites/fighter_combo_0079.png",
+			"./res/fighter_sprites/fighter_combo_0080.png",
+			"./res/fighter_sprites/fighter_combo_0082.png",
+		}
+	}
 	return []string{}
 }
