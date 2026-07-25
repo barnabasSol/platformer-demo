@@ -88,6 +88,7 @@ func getTextures(state string) []string {
 			"./res/fighter_sprites/fighter_combo_0078.png",
 			"./res/fighter_sprites/fighter_combo_0079.png",
 			"./res/fighter_sprites/fighter_combo_0080.png",
+			"./res/fighter_sprites/fighter_combo_0081.png",
 			"./res/fighter_sprites/fighter_combo_0082.png",
 		}
 	}
