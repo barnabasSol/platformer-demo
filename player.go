@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"strconv"
 
 	rl "github.com/gen2brain/raylib-go/raylib"
@@ -24,12 +23,12 @@ func (p *Player) Update(
 	delta float32,
 	envItems []EnvironmentItem,
 ) {
-	p.ComboResetCounter -= .13
+	p.ComboResetCounter -= 8 * delta
 	if p.ComboResetCounter <= 0 {
 		p.ComboCounter = 0
 		p.ComboResetCounter = 0
 	}
-	fmt.Printf("p.ComboResetCounter: %v\n", p.ComboResetCounter)
+	rl.TraceLog(rl.LogInfo, "ComboResetCounter: %v", p.ComboResetCounter)
 	if p.JumpSpeed != 0 {
 		p.SpriteAnimation.FramePinned = false
 		p.Grounded = false
@@ -51,7 +50,6 @@ func (p *Player) Update(
 				p.HorSpeed = -hor_speed * 3.5
 			}
 		}
-
 		if rl.IsKeyPressed(rl.KeyJ) {
 			p.ComboCounter += 1
 			if p.ComboCounter > 3 {
@@ -66,8 +64,8 @@ func (p *Player) Update(
 				p.ComboResetCounter += 5
 			}
 			p.SpriteAnimation.CurrentFrame = 0
+			p.SpriteAnimation.CurrentState = "combo" + strconv.Itoa(p.ComboCounter)
 			p.SpriteAnimation.OneShot = true
-			p.SpriteAnimation.CurrentState = "combo" + strconv.FormatInt(int64(p.ComboCounter), 10)
 		}
 		if rl.IsKeyDown(rl.KeyD) &&
 			rl.IsKeyDown(rl.KeyLeftShift) &&
