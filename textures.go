@@ -1,7 +1,7 @@
 package main
 
 func getTextures(state string) []string {
-	if state == "idle" {
+	if state == StateIdle {
 		return []string{
 			"./res/fighter_sprites/fighter_Idle_0001.png",
 			"./res/fighter_sprites/fighter_Idle_0002.png",
@@ -14,7 +14,7 @@ func getTextures(state string) []string {
 		}
 	}
 
-	if state == "walk" {
+	if state == StateWalk {
 		return []string{
 			"./res/fighter_sprites/fighter_walk_0009.png",
 			"./res/fighter_sprites/fighter_walk_0010.png",
@@ -27,7 +27,7 @@ func getTextures(state string) []string {
 		}
 	}
 
-	if state == "run" {
+	if state == StateRun {
 		return []string{
 			"./res/fighter_sprites/fighter_run_0017.png",
 			"./res/fighter_sprites/fighter_run_0018.png",
@@ -40,7 +40,7 @@ func getTextures(state string) []string {
 		}
 	}
 
-	if state == "jump" {
+	if state == StateJump {
 		return []string{
 			"./res/fighter_sprites/fighter_jump_0043.png",
 			"./res/fighter_sprites/fighter_jump_0044.png",
@@ -51,7 +51,7 @@ func getTextures(state string) []string {
 		}
 	}
 
-	if state == "dash" {
+	if state == StateDash {
 		return []string{
 			"./res/fighter_sprites/fighter_dash_0033.png",
 			"./res/fighter_sprites/fighter_dash_0034.png",
@@ -61,7 +61,7 @@ func getTextures(state string) []string {
 			"./res/fighter_sprites/fighter_dash_0038.png",
 		}
 	}
-	if state == "combo1" {
+	if state == StateCombo1 {
 		return []string{
 			"./res/fighter_sprites/fighter_combo_0064.png",
 			"./res/fighter_sprites/fighter_combo_0065.png",
@@ -70,7 +70,7 @@ func getTextures(state string) []string {
 			"./res/fighter_sprites/fighter_combo_0068.png",
 		}
 	}
-	if state == "combo2" {
+	if state == StateCombo2 {
 		return []string{
 			"./res/fighter_sprites/fighter_combo_0069.png",
 			"./res/fighter_sprites/fighter_combo_0070.png",
@@ -78,11 +78,11 @@ func getTextures(state string) []string {
 			"./res/fighter_sprites/fighter_combo_0072.png",
 			"./res/fighter_sprites/fighter_combo_0073.png",
 			"./res/fighter_sprites/fighter_combo_0074.png",
-			"./res/fighter_sprites/fighter_combo_0075.png",
 		}
 	}
-	if state == "combo3" {
+	if state == StateCombo3 {
 		return []string{
+			"./res/fighter_sprites/fighter_combo_0075.png",
 			"./res/fighter_sprites/fighter_combo_0076.png",
 			"./res/fighter_sprites/fighter_combo_0077.png",
 			"./res/fighter_sprites/fighter_combo_0078.png",

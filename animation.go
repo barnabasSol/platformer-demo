@@ -46,7 +46,7 @@ func (s *SpriteAnimation) Update(
 				player.NextComboQueued = false
 				player.startCombo()
 			} else {
-				s.CurrentState = "idle"
+				s.CurrentState = StateIdle
 			}
 		} else {
 			s.CurrentFrame = (s.CurrentFrame + 1) % len(s.StateTextures[s.CurrentState])
@@ -59,14 +59,14 @@ func (s *SpriteAnimation) Update(
 
 func (s *SpriteAnimation) Load() {
 	states := []string{
-		"idle",
-		"walk",
-		"run",
-		"jump",
-		"dash",
-		"combo1",
-		"combo2",
-		"combo3",
+		StateIdle,
+		StateWalk,
+		StateRun,
+		StateJump,
+		StateDash,
+		StateCombo1,
+		StateCombo2,
+		StateCombo3,
 	}
 	for _, state := range states {
 		paths := getTextures(state)
@@ -80,14 +80,14 @@ func (s *SpriteAnimation) Load() {
 
 func (s *SpriteAnimation) Unload() {
 	states := []string{
-		"idle",
-		"walk",
-		"run",
-		"jump",
-		"dash",
-		"combo1",
-		"combo2",
-		"combo3",
+		StateIdle,
+		StateWalk,
+		StateRun,
+		StateJump,
+		StateDash,
+		StateCombo1,
+		StateCombo2,
+		StateCombo3,
 	}
 	for _, state := range states {
 		for _, tex := range s.StateTextures[state] {

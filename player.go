@@ -2,9 +2,19 @@ package main
 
 import (
 	"strconv"
-	"strings"
 
 	rl "github.com/gen2brain/raylib-go/raylib"
+)
+
+const (
+	StateIdle   = "idle"
+	StateWalk   = "walk"
+	StateRun    = "run"
+	StateJump   = "jump"
+	StateDash   = "dash"
+	StateCombo1 = "combo1"
+	StateCombo2 = "combo2"
+	StateCombo3 = "combo3"
 )
 
 type Player struct {
@@ -39,6 +49,16 @@ func (p *Player) startCombo() {
 	p.SpriteAnimation.OneShot = true
 }
 
+func (p *Player) isInActionState() bool {
+	cs := p.SpriteAnimation.CurrentState
+	return cs == StateDash || cs == StateCombo1 || cs == StateCombo2 || cs == StateCombo3
+}
+
+func (p *Player) isInCombo() bool {
+	cs := p.SpriteAnimation.CurrentState
+	return cs == StateCombo1 || cs == StateCombo2 || cs == StateCombo3
+}
+
 func (p *Player) Update(
 	delta float32,
 	envItems []EnvironmentItem,
@@ -48,22 +68,19 @@ func (p *Player) Update(
 		p.ComboCounter = 0
 		p.ComboResetCounter = 0
 	}
-	rl.TraceLog(rl.LogInfo, "ComboResetCounter: %v", p.ComboResetCounter)
+	// rl.TraceLog(rl.LogInfo, "ComboResetCounter: %v", p.ComboResetCounter)
 	if p.JumpSpeed != 0 {
 		p.SpriteAnimation.FramePinned = false
 		p.Grounded = false
-		if p.SpriteAnimation.CurrentState != "dash" &&
-			p.SpriteAnimation.CurrentState != "combo1" &&
-			p.SpriteAnimation.CurrentState != "combo2" &&
-			p.SpriteAnimation.CurrentState != "combo3" {
-			p.SpriteAnimation.CurrentState = "jump"
+		if !p.isInActionState() {
+			p.SpriteAnimation.CurrentState = StateJump
 		}
 	}
-	if p.SpriteAnimation.CurrentState != "dash" {
+	if p.SpriteAnimation.CurrentState != StateDash {
 		if rl.IsKeyDown(rl.KeyL) {
 			p.SpriteAnimation.OneShot = true
 			p.SpriteAnimation.CurrentFrame = 0
-			p.SpriteAnimation.CurrentState = "dash"
+			p.SpriteAnimation.CurrentState = StateDash
 			if p.FacingRight {
 				p.HorSpeed = hor_speed * 3.5
 			} else {
@@ -71,9 +88,7 @@ func (p *Player) Update(
 			}
 		}
 		if rl.IsKeyPressed(rl.KeyJ) {
-			if p.SpriteAnimation.CurrentState == "combo1" ||
-				p.SpriteAnimation.CurrentState == "combo2" ||
-				p.SpriteAnimation.CurrentState == "combo3" {
+			if p.isInCombo() {
 				p.NextComboQueued = true
 			} else {
 				p.startCombo()
@@ -82,43 +97,43 @@ func (p *Player) Update(
 		if rl.IsKeyDown(rl.KeyD) &&
 			rl.IsKeyDown(rl.KeyLeftShift) &&
 			!rl.IsKeyDown(rl.KeyL) &&
-			!strings.HasPrefix(p.SpriteAnimation.CurrentState, "combo") {
+			!p.isInCombo() {
 			p.FacingRight = true
 			p.HorSpeed = hor_speed * 2
 			if p.JumpSpeed == 0 {
-				p.SpriteAnimation.CurrentState = "run"
+				p.SpriteAnimation.CurrentState = StateRun
 			}
 		} else if rl.IsKeyDown(rl.KeyD) &&
 			!rl.IsKeyDown(rl.KeyL) &&
-			!strings.HasPrefix(p.SpriteAnimation.CurrentState, "combo") {
+			!p.isInCombo() {
 			p.FacingRight = true
 			p.HorSpeed = hor_speed
 			if p.JumpSpeed == 0 {
-				p.SpriteAnimation.CurrentState = "walk"
+				p.SpriteAnimation.CurrentState = StateWalk
 			}
 		}
 		if rl.IsKeyDown(rl.KeyA) &&
 			rl.IsKeyDown(rl.KeyLeftShift) &&
 			!rl.IsKeyDown(rl.KeyL) &&
-			!strings.HasPrefix(p.SpriteAnimation.CurrentState, "combo") {
+			!p.isInCombo() {
 			p.FacingRight = false
 			p.HorSpeed = -hor_speed * 2
 			if p.JumpSpeed == 0 {
-				p.SpriteAnimation.CurrentState = "run"
+				p.SpriteAnimation.CurrentState = StateRun
 			}
 		} else if rl.IsKeyDown(rl.KeyA) &&
 			!rl.IsKeyDown(rl.KeyL) &&
-			!strings.HasPrefix(p.SpriteAnimation.CurrentState, "combo") {
+			!p.isInCombo() {
 			p.FacingRight = false
 			p.HorSpeed = -hor_speed
 			if p.JumpSpeed == 0 {
-				p.SpriteAnimation.CurrentState = "walk"
+				p.SpriteAnimation.CurrentState = StateWalk
 			}
 		}
 	}
 	if rl.IsKeyPressed(rl.KeySpace) && p.Grounded {
-		p.SpriteAnimation.CurrentState = "jump"
-		if p.SpriteAnimation.CurrentState != "dash" {
+		p.SpriteAnimation.CurrentState = StateJump
+		if p.SpriteAnimation.CurrentState != StateDash {
 			p.JumpSpeed = jump_speed
 		}
 		p.Grounded = false
@@ -138,10 +153,7 @@ func (p *Player) Update(
 	}
 
 	if !p.Grounded &&
-		p.SpriteAnimation.CurrentState != "dash" &&
-		p.SpriteAnimation.CurrentState != "combo1" &&
-		p.SpriteAnimation.CurrentState != "combo2" &&
-		p.SpriteAnimation.CurrentState != "combo3" {
+		!p.isInActionState() {
 		p.SpriteAnimation.FramePinned = true
 		if p.JumpSpeed > 0 {
 			p.SpriteAnimation.CurrentFrame = 4
@@ -150,15 +162,12 @@ func (p *Player) Update(
 		}
 	}
 
-	if p.SpriteAnimation.CurrentState != "dash" &&
-		p.SpriteAnimation.CurrentState != "combo1" &&
-		p.SpriteAnimation.CurrentState != "combo2" &&
-		p.SpriteAnimation.CurrentState != "combo3" {
+	if !p.isInActionState() {
 		if p.Grounded {
 			if p.HorSpeed == 0 && p.JumpSpeed == 0 {
-				p.SpriteAnimation.CurrentState = "idle"
+				p.SpriteAnimation.CurrentState = StateIdle
 			} else if !rl.IsKeyDown(rl.KeyA) && !rl.IsKeyDown(rl.KeyD) && p.HorSpeed != 0 {
-				p.SpriteAnimation.CurrentState = "walk"
+				p.SpriteAnimation.CurrentState = StateWalk
 			}
 		}
 	}
@@ -174,7 +183,7 @@ func (p *Player) Update(
 
 func (p *Player) OnGrounded(envItems []EnvironmentItem) {
 	if p.HorSpeed == 0 && p.Grounded && !p.SpriteAnimation.OneShot {
-		p.SpriteAnimation.CurrentState = "idle"
+		p.SpriteAnimation.CurrentState = StateIdle
 	}
 	if p.FootPosition.Y >= float32(floor) {
 

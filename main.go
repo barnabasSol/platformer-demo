@@ -33,7 +33,7 @@ func main() {
 			FrameDuration: 0.099,
 			Timer:         0,
 			Rect:          rl.NewRectangle(0, 0, 512/2, 512/2),
-			CurrentState:  "jump",
+			CurrentState:  StateJump,
 			FramePinned:   true,
 		},
 	}
