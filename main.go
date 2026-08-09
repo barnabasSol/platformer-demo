@@ -20,6 +20,13 @@ func main() {
 		{Rect: rl.NewRectangle(50, 380, 150, 10), Color: rl.Black},
 		{Rect: rl.NewRectangle(260, 320, 170, 10), Color: rl.Black},
 	}
+	game_map := Map{
+		MaxWidth:  1600,
+		MinWidth:  0,
+		MaxHeight: 0,
+		MinHeight: 1600,
+	}
+	game_map.initClouds()
 
 	player := Player{
 		FootPosition: rl.NewVector2(float32(width)/2, float32(height)/2),
@@ -56,12 +63,15 @@ func main() {
 		currentFrame := player.SpriteAnimation.CurrentFrame
 		currentTex := player.SpriteAnimation.StateTextures[spriteCurrentState]
 
+		game_map.updateMap(player, delta)
+
 		rl.BeginDrawing()
 		rl.ClearBackground(rl.Brown)
 
 		for _, ei := range envItems {
 			rl.DrawRectangleRec(ei.Rect, ei.Color)
 		}
+		game_map.drawMap()
 		rl.DrawTexturePro(
 			currentTex[currentFrame],
 			player.SpriteAnimation.Src,
