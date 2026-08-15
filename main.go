@@ -9,24 +9,21 @@ const (
 	height     int32   = 450
 	jump_speed float32 = -400
 	hor_speed  float32 = 130
-	floor      int32   = height
+	floor      int32   = 340
 )
 
 func main() {
 	rl.SetConfigFlags(rl.FlagWindowHighdpi)
 
 	rl.InitWindow(width, height, "platformer")
-	envItems := []EnvironmentItem{
-		{Rect: rl.NewRectangle(50, 380, 150, 10), Color: rl.Black},
-		{Rect: rl.NewRectangle(260, 320, 170, 10), Color: rl.Black},
-	}
+	envItems := []EnvironmentItem{}
 	game_map := Map{
 		MaxWidth:  1600,
 		MinWidth:  0,
 		MaxHeight: 0,
 		MinHeight: 1600,
 	}
-	game_map.initClouds()
+	game_map.initMap()
 
 	player := Player{
 		FootPosition: rl.NewVector2(float32(width)/2, float32(height)/2),
@@ -47,6 +44,9 @@ func main() {
 	player.SpriteAnimation.Load()
 	player.JumpSpeed = player.Gravity
 
+	cam := NewCamera(player)
+	_ = cam
+
 	defer func() {
 		rl.CloseWindow()
 		player.SpriteAnimation.Unload()
@@ -64,10 +64,11 @@ func main() {
 		currentTex := player.SpriteAnimation.StateTextures[spriteCurrentState]
 
 		game_map.updateMap(player, delta)
+		cam.Update(player.FootPosition, delta)
 
 		rl.BeginDrawing()
-		rl.ClearBackground(rl.Brown)
-
+		rl.ClearBackground(rl.SkyBlue)
+		rl.BeginMode2D(cam.Cam)
 		for _, ei := range envItems {
 			rl.DrawRectangleRec(ei.Rect, ei.Color)
 		}
@@ -82,6 +83,7 @@ func main() {
 		)
 		rl.DrawCircleV(player.FootPosition, 3, rl.Pink)
 		rl.DrawFPS(20, 20)
+		rl.EndMode2D()
 
 		rl.EndDrawing()
 	}
