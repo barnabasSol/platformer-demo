@@ -64,7 +64,7 @@ func main() {
 		currentTex := player.SpriteAnimation.StateTextures[spriteCurrentState]
 
 		game_map.updateMap(player, delta)
-		cam.Update(player.FootPosition, delta)
+		cam.Update(player, delta)
 
 		rl.BeginDrawing()
 		rl.ClearBackground(rl.SkyBlue)
