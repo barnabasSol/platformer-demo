@@ -1,6 +1,8 @@
 package main
 
-import rl "github.com/gen2brain/raylib-go/raylib"
+import (
+	rl "github.com/gen2brain/raylib-go/raylib"
+)
 
 type Camera struct {
 	Cam         rl.Camera2D
@@ -38,5 +40,15 @@ func (c *Camera) Update(
 	if !c.EdgeReached && c.Cam.Target.X <= 370 || c.Cam.Target.X+c.Cam.Offset.X >= 1300 {
 		c.EdgeReached = true
 		edgePosX = c.Cam.Target.X
+	}
+	if c.EdgeReached &&
+		p.FootPosition.X > (370+1300)/2 &&
+		p.FootPosition.X < edgePosX {
+		c.EdgeReached = false
+	}
+	if c.EdgeReached &&
+		p.FootPosition.X < (370+1300)/2 &&
+		p.FootPosition.X > edgePosX {
+		c.EdgeReached = false
 	}
 }
