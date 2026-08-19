@@ -30,24 +30,30 @@ var edgePosX float32 = 0
 func (c *Camera) Update(
 	p Player,
 	delta float32,
+	gm Map,
+
 ) {
 	if c.EdgeReached {
-		println("eat me")
 		c.Cam.Target.X = edgePosX
+		c.Cam.Target.Y = p.FootPosition.Y
 	} else {
 		c.Cam.Target = p.FootPosition
 	}
-	if !c.EdgeReached && c.Cam.Target.X <= 370 || c.Cam.Target.X+c.Cam.Offset.X >= 1300 {
+	if !c.EdgeReached &&
+		c.Cam.Target.X <= float32(gm.MinWidth) ||
+		c.Cam.Target.X+c.Cam.Offset.X >= float32(gm.MaxWidth) {
 		c.EdgeReached = true
 		edgePosX = c.Cam.Target.X
 	}
+	//right
 	if c.EdgeReached &&
-		p.FootPosition.X > (370+1300)/2 &&
+		p.FootPosition.X > (float32(gm.MinWidth)+float32(gm.MaxWidth))/2 &&
 		p.FootPosition.X < edgePosX {
 		c.EdgeReached = false
 	}
+	//left
 	if c.EdgeReached &&
-		p.FootPosition.X < (370+1300)/2 &&
+		p.FootPosition.X < (float32(gm.MinWidth)+float32(gm.MaxWidth))/2 &&
 		p.FootPosition.X > edgePosX {
 		c.EdgeReached = false
 	}

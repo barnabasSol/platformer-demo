@@ -9,7 +9,7 @@ const (
 	height     int32   = 450
 	jump_speed float32 = -400
 	hor_speed  float32 = 130
-	floor      int32   = 340
+	floor      int32   = 310
 )
 
 func main() {
@@ -18,15 +18,15 @@ func main() {
 	rl.InitWindow(width, height, "platformer")
 	envItems := []EnvironmentItem{}
 	game_map := Map{
-		MaxWidth:  1600,
-		MinWidth:  0,
+		MaxWidth:  1300,
+		MinWidth:  370,
 		MaxHeight: 0,
 		MinHeight: 1600,
 	}
 	game_map.initMap()
 
 	player := Player{
-		FootPosition: rl.NewVector2(float32(width)/2, float32(height)/2),
+		FootPosition: rl.NewVector2(float32(width)/2, float32(height)/6),
 		Grounded:     false,
 		Gravity:      200,
 		DragSpeed:    -340,
@@ -45,8 +45,6 @@ func main() {
 	player.JumpSpeed = player.Gravity
 
 	cam := NewCamera(player)
-	_ = cam
-
 	defer func() {
 		rl.CloseWindow()
 		player.SpriteAnimation.Unload()
@@ -64,7 +62,7 @@ func main() {
 		currentTex := player.SpriteAnimation.StateTextures[spriteCurrentState]
 
 		game_map.updateMap(player, delta)
-		cam.Update(player, delta)
+		cam.Update(player, delta, game_map)
 
 		rl.BeginDrawing()
 		rl.ClearBackground(rl.SkyBlue)
