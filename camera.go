@@ -17,14 +17,13 @@ func NewCamera(p Player) *Camera {
 			Y: float32(height) / 1.3,
 		},
 		Rotation: 0,
-		Zoom:     1.1,
+		Zoom:     1,
 	}
 	return &Camera{
 		Cam: cam,
 	}
 }
 
-var vecX = 60
 var edgePosX float32 = 0
 
 func (c *Camera) Update(
@@ -40,21 +39,22 @@ func (c *Camera) Update(
 		c.Cam.Target = p.FootPosition
 	}
 	if !c.EdgeReached &&
-		c.Cam.Target.X <= float32(gm.MinWidth) ||
-		c.Cam.Target.X+c.Cam.Offset.X >= float32(gm.MaxWidth) {
+		(c.Cam.Target.X-30 <= float32(gm.MinWidth) ||
+			c.Cam.Target.X+c.Cam.Offset.X >= float32(gm.MaxWidth)) {
 		c.EdgeReached = true
 		edgePosX = c.Cam.Target.X
 	}
+	center := (float32(gm.MinWidth) + float32(gm.MaxWidth)) / 2
 	//right
 	if c.EdgeReached &&
-		p.FootPosition.X > (float32(gm.MinWidth)+float32(gm.MaxWidth))/2 &&
-		p.FootPosition.X < edgePosX {
+		(p.FootPosition.X > center &&
+			p.FootPosition.X < edgePosX) {
 		c.EdgeReached = false
 	}
 	//left
 	if c.EdgeReached &&
-		p.FootPosition.X < (float32(gm.MinWidth)+float32(gm.MaxWidth))/2 &&
-		p.FootPosition.X > edgePosX {
+		(p.FootPosition.X < center &&
+			p.FootPosition.X > edgePosX) {
 		c.EdgeReached = false
 	}
 }
