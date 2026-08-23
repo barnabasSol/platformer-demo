@@ -1,7 +1,5 @@
 package main
 
-import rl "github.com/gen2brain/raylib-go/raylib"
-
 // player
 func getTextures(state string) []string {
 	if state == StateIdle {
@@ -96,20 +94,4 @@ func getTextures(state string) []string {
 		}
 	}
 	return []string{}
-}
-
-// world
-func getLoadedLayerTextures(layer string) rl.Texture2D {
-	if layer == LayerSky {
-		return rl.LoadTexture("./res/day_platformer/PNG/sky.png")
-	}
-
-	if layer == LayerCloud {
-		return rl.LoadTexture("./res/day_platformer/PNG/clouds.png")
-	}
-
-	if layer == LayerTrees {
-		return rl.LoadTexture("./res/day_platformer/PNG/trees.png")
-	}
-	panic("what the hell")
 }

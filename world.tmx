@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="100" height="30" tilewidth="16" tileheight="16" infinite="0" nextlayerid="2" nextobjectid="1">
+<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="100" height="30" tilewidth="16" tileheight="16" infinite="0" nextlayerid="9" nextobjectid="1">
  <tileset firstgid="1" source="worldtilesets.tsx"/>
  <layer id="1" name="World" width="100" height="30">
   <data encoding="csv">
@@ -35,4 +35,22 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
+ <imagelayer id="3" name="Cloud" offsetx="1256.67" offsety="20.6667">
+  <image source="res/day_platformer/PNG/clouds.png" width="459" height="142"/>
+ </imagelayer>
+ <imagelayer id="7" name="Cloud" offsetx="1026.67" offsety="-13.3333">
+  <image source="res/day_platformer/PNG/clouds.png" width="459" height="142"/>
+ </imagelayer>
+ <imagelayer id="6" name="Cloud" offsetx="664" offsety="29.3333">
+  <image source="res/day_platformer/PNG/clouds.png" width="459" height="142"/>
+ </imagelayer>
+ <imagelayer id="4" name="Cloud" offsetx="362.667" offsety="8">
+  <image source="res/day_platformer/PNG/clouds.png" width="459" height="142"/>
+ </imagelayer>
+ <imagelayer id="5" name="Cloud" offsetx="-5.33333" offsety="-12">
+  <image source="res/day_platformer/PNG/clouds.png" width="459" height="142"/>
+ </imagelayer>
+ <imagelayer id="8" name="Image Layer 6" offsetx="1" offsety="93" repeatx="1">
+  <image source="res/day_platformer/PNG/trees.png" width="144" height="130"/>
+ </imagelayer>
 </map>

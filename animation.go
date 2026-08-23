@@ -53,7 +53,7 @@ func (s *SpriteAnimation) Update(
 			s.Timer = 0
 		}
 	}
-	dst.Y += 66
+	dst.Y += 56
 	s.Dst = dst
 }
 
