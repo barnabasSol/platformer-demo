@@ -17,7 +17,7 @@ func NewCamera(p Player) *Camera {
 			Y: float32(height) / 1.3,
 		},
 		Rotation: 0,
-		Zoom:     1,
+		Zoom:     1.3,
 	}
 	return &Camera{
 		Cam: cam,
