@@ -10,7 +10,7 @@ import (
 const (
 	width      int32   = 800
 	height     int32   = 450
-	jump_speed float32 = -400
+	jump_speed float32 = -600
 	hor_speed  float32 = 130
 )
 
@@ -22,6 +22,24 @@ func main() {
 	rl.InitWindow(width, height, "platformer")
 
 	gameMap, err := tiled.LoadFile("world.tmx")
+	var envObjs []EnvironmentObject
+	for _, objectLayer := range gameMap.ObjectGroups {
+		if objectLayer.Name != "Collision" {
+			continue
+		}
+
+		for _, object := range objectLayer.Objects {
+			envObjs = append(envObjs, EnvironmentObject{
+				Rect: rl.Rectangle{
+					X:      float32(object.X),
+					Y:      float32(object.Y),
+					Width:  float32(object.Width),
+					Height: float32(object.Height),
+				},
+				Color: rl.Red,
+			})
+		}
+	}
 	tilesetTexture := rl.LoadTexture("res/day_platformer/PNG/tileset.png")
 	if err != nil {
 		log.Fatal(err)
@@ -33,6 +51,7 @@ func main() {
 		Gravity:      200,
 		DragSpeed:    -340,
 		FacingRight:  true,
+		Box:          rl.NewRectangle(0, 0, 30, 60),
 		SpriteAnimation: &SpriteAnimation{
 			StateTextures: map[string][]rl.Texture2D{},
 			CurrentFrame:  0,
@@ -61,7 +80,7 @@ func main() {
 	for !rl.WindowShouldClose() {
 		delta := rl.GetFrameTime()
 
-		player.Update(delta, []EnvironmentItem{})
+		player.Update(delta, envObjs)
 		player.SpriteAnimation.Update(delta, &player)
 
 		spriteCurrentState := player.SpriteAnimation.CurrentState
@@ -101,15 +120,15 @@ func main() {
 				tileY := localID / tilesetColumns
 
 				source := rl.Rectangle{
-					X:      float32(tileX * tileWidth),
-					Y:      float32(tileY * tileHeight),
+					X:      float32(tileX) * tileWidth,
+					Y:      float32(tileY) * tileHeight,
 					Width:  tileWidth,
 					Height: tileHeight,
 				}
 
 				destination := rl.Rectangle{
-					X:      float32(x * tileWidth),
-					Y:      float32(y * tileHeight),
+					X:      float32(x) * tileWidth,
+					Y:      float32(y) * tileHeight,
 					Width:  tileWidth,
 					Height: tileHeight,
 				}
@@ -133,7 +152,15 @@ func main() {
 			0,
 			rl.White,
 		)
+		// rl.DrawRectangleRec(player.Box, rl.Red)
 		rl.DrawCircleV(player.FootPosition, 3, rl.Red)
+		for _, eo := range envObjs {
+			rl.DrawRectangleLinesEx(
+				eo.Rect,
+				1,
+				eo.Color,
+			)
+		}
 		rl.EndMode2D()
 		rl.DrawFPS(20, 20)
 

@@ -1,8 +1,8 @@
 package main
 
 const (
-	tileWidth  = 16
-	tileHeight = 16
+	tileWidth  float32 = 16
+	tileHeight float32 = 16
 
 	tilesetColumns = 24
 )

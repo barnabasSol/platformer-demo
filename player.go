@@ -18,6 +18,7 @@ const (
 )
 
 type Player struct {
+	Box               rl.Rectangle
 	FootPosition      rl.Vector2
 	JumpSpeed         float32
 	FacingRight       bool
@@ -61,7 +62,7 @@ func (p *Player) isInCombo() bool {
 
 func (p *Player) Update(
 	delta float32,
-	envItems []EnvironmentItem,
+	envObjs []EnvironmentObject,
 ) {
 	p.ComboResetCounter -= 8 * delta
 	if p.ComboResetCounter <= 0 {
@@ -175,35 +176,47 @@ func (p *Player) Update(
 	p.JumpSpeed += p.Gravity * delta
 	p.FootPosition.Y += p.JumpSpeed * delta
 
-	p.OnGrounded(envItems)
+	p.OnGrounded(envObjs)
 
 	p.SpriteAnimation.Rect.X = p.FootPosition.X - p.SpriteAnimation.Rect.Width/2
 	p.SpriteAnimation.Rect.Y = p.FootPosition.Y - p.SpriteAnimation.Rect.Height
+	p.Box.X = p.FootPosition.X - 13
+	p.Box.Y = p.FootPosition.Y + -60
 }
 
-func (p *Player) OnGrounded(envItems []EnvironmentItem) {
+func (p *Player) OnGrounded(envObjs []EnvironmentObject) {
 	if p.HorSpeed == 0 && p.Grounded && !p.SpriteAnimation.OneShot {
 		p.SpriteAnimation.CurrentState = StateIdle
 	}
-	if p.FootPosition.Y >= float32(floor) {
+	// if p.FootPosition.Y >= float32(floor) {
 
-		p.JumpSpeed = 0
-		p.FootPosition.Y = float32(floor)
-		p.Grounded = true
-		p.SpriteAnimation.FramePinned = false
-		p.Gravity = 900
-		p.SpriteAnimation.FrameDuration = 0.099
+	// 	p.JumpSpeed = 0
+	// 	p.FootPosition.Y = float32(floor)
+	// 	p.Grounded = true
+	// 	p.SpriteAnimation.FramePinned = false
+	// 	p.Gravity = 900
+	// 	p.SpriteAnimation.FrameDuration = 0.099
 
-	}
-	for _, ei := range envItems {
-		if p.FootPosition.Y >= ei.Rect.Y &&
-			p.FootPosition.X >= float32(ei.Rect.X) &&
-			p.FootPosition.X <= ei.Rect.X+float32(ei.Rect.Width) &&
-			p.FootPosition.Y <= ei.Rect.Y+ei.Rect.Height &&
+	// }
+	for _, eo := range envObjs {
+		if eo.Blocking {
+			if rl.CheckCollisionRecs(p.Box, eo.Rect) {
+				if p.JumpSpeed >= 0 {
+					p.FootPosition.Y = eo.Rect.Y
+					p.JumpSpeed = 0
+					p.Grounded = true
+				}
+			}
+
+		}
+		if p.FootPosition.Y >= eo.Rect.Y &&
+			p.FootPosition.X >= float32(eo.Rect.X) &&
+			p.FootPosition.X <= eo.Rect.X+float32(eo.Rect.Width) &&
+			p.FootPosition.Y <= eo.Rect.Y+eo.Rect.Height &&
 			p.JumpSpeed >= 0 {
 
 			p.JumpSpeed = 0
-			p.FootPosition.Y = ei.Rect.Y
+			p.FootPosition.Y = eo.Rect.Y
 			p.Grounded = true
 			p.SpriteAnimation.FramePinned = false
 			p.Gravity = 900
