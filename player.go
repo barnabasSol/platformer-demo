@@ -181,7 +181,7 @@ func (p *Player) Update(
 	p.SpriteAnimation.Rect.X = p.FootPosition.X - p.SpriteAnimation.Rect.Width/2
 	p.SpriteAnimation.Rect.Y = p.FootPosition.Y - p.SpriteAnimation.Rect.Height
 	p.Box.X = p.FootPosition.X - 13
-	p.Box.Y = p.FootPosition.Y + -60
+	p.Box.Y = p.FootPosition.Y - 60
 }
 
 func (p *Player) OnGrounded(envObjs []EnvironmentObject) {
@@ -199,16 +199,6 @@ func (p *Player) OnGrounded(envObjs []EnvironmentObject) {
 
 	// }
 	for _, eo := range envObjs {
-		if eo.Blocking {
-			if rl.CheckCollisionRecs(p.Box, eo.Rect) {
-				if p.JumpSpeed >= 0 {
-					p.FootPosition.Y = eo.Rect.Y
-					p.JumpSpeed = 0
-					p.Grounded = true
-				}
-			}
-
-		}
 		if p.FootPosition.Y >= eo.Rect.Y &&
 			p.FootPosition.X >= float32(eo.Rect.X) &&
 			p.FootPosition.X <= eo.Rect.X+float32(eo.Rect.Width) &&
