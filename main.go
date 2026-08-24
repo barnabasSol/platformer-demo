@@ -46,7 +46,7 @@ func main() {
 	defer rl.UnloadTexture(tilesetTexture)
 
 	player := Player{
-		FootPosition: rl.NewVector2(float32(width)/2, float32(height)/6),
+		FootPosition: rl.NewVector2(float32(width)/1.8, float32(height)/6),
 		Grounded:     false,
 		Gravity:      200,
 		DragSpeed:    -340,

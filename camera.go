@@ -34,9 +34,11 @@ func (c *Camera) Update(
 
 ) {
 
-	left := c.Cam.Target.X - c.Cam.Offset.X/c.Cam.Zoom
+	//the 10 added/subtracted is to eliminate the extra view that goes beyond the map,
+	//shitty solution, ill get to do something better eventually
+	left := c.Cam.Target.X - c.Cam.Offset.X - 10/c.Cam.Zoom
 
-	right := c.Cam.Target.X + (float32(width)-c.Cam.Offset.X)/c.Cam.Zoom
+	right := c.Cam.Target.X + (float32(width)-c.Cam.Offset.X+10)/c.Cam.Zoom
 
 	// top := c.Cam.Target.Y - c.Cam.Offset.Y/c.Cam.Zoom
 
