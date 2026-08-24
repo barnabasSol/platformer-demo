@@ -172,46 +172,43 @@ func (p *Player) Update(
 			}
 		}
 	}
+	oldFootY := p.FootPosition.Y
 
 	p.JumpSpeed += p.Gravity * delta
 	p.FootPosition.Y += p.JumpSpeed * delta
 
-	p.OnGrounded(envObjs)
+	p.OnGrounded(envObjs, oldFootY)
 
 	p.SpriteAnimation.Rect.X = p.FootPosition.X - p.SpriteAnimation.Rect.Width/2
 	p.SpriteAnimation.Rect.Y = p.FootPosition.Y - p.SpriteAnimation.Rect.Height
 	p.Box.X = p.FootPosition.X - 13
-	p.Box.Y = p.FootPosition.Y - 60
+	p.Box.Y = p.FootPosition.Y + -60
 }
 
-func (p *Player) OnGrounded(envObjs []EnvironmentObject) {
+func (p *Player) OnGrounded(
+	envObjs []EnvironmentObject,
+	oldFootPosY float32,
+) {
 	if p.HorSpeed == 0 && p.Grounded && !p.SpriteAnimation.OneShot {
 		p.SpriteAnimation.CurrentState = StateIdle
 	}
-	// if p.FootPosition.Y >= float32(floor) {
-
-	// 	p.JumpSpeed = 0
-	// 	p.FootPosition.Y = float32(floor)
-	// 	p.Grounded = true
-	// 	p.SpriteAnimation.FramePinned = false
-	// 	p.Gravity = 900
-	// 	p.SpriteAnimation.FrameDuration = 0.099
-
-	// }
 	for _, eo := range envObjs {
-		if p.FootPosition.Y >= eo.Rect.Y &&
-			p.FootPosition.X >= float32(eo.Rect.X) &&
-			p.FootPosition.X <= eo.Rect.X+float32(eo.Rect.Width) &&
-			p.FootPosition.Y <= eo.Rect.Y+eo.Rect.Height &&
-			p.JumpSpeed >= 0 {
+		if p.JumpSpeed >= 0 &&
+
+			p.FootPosition.X >= eo.Rect.X &&
+			p.FootPosition.X <= eo.Rect.X+eo.Rect.Width &&
+
+			//i dont understand this, its from raylib by examples, ill ponder on it later
+			oldFootPosY <= eo.Rect.Y &&
+			p.FootPosition.Y >= eo.Rect.Y {
 
 			p.JumpSpeed = 0
 			p.FootPosition.Y = eo.Rect.Y
 			p.Grounded = true
+
 			p.SpriteAnimation.FramePinned = false
 			p.Gravity = 900
 			p.SpriteAnimation.FrameDuration = 0.099
-
 		}
 	}
 }

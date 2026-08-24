@@ -17,7 +17,6 @@ const (
 var floor int32
 
 func main() {
-	rl.SetConfigFlags(rl.FlagWindowHighdpi)
 
 	rl.InitWindow(width, height, "platformer")
 
@@ -44,6 +43,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer rl.UnloadTexture(tilesetTexture)
 
 	player := Player{
 		FootPosition: rl.NewVector2(float32(width)/2, float32(height)/6),
@@ -87,7 +87,7 @@ func main() {
 		currentFrame := player.SpriteAnimation.CurrentFrame
 		currentTex := player.SpriteAnimation.StateTextures[spriteCurrentState]
 
-		cam.Update(player, delta)
+		cam.Update(player, gameMap, delta)
 
 		rl.BeginDrawing()
 		rl.ClearBackground(rl.SkyBlue)
@@ -127,10 +127,11 @@ func main() {
 				}
 
 				destination := rl.Rectangle{
-					X:      float32(x) * tileWidth,
-					Y:      float32(y) * tileHeight,
-					Width:  tileWidth,
-					Height: tileHeight,
+					X: float32(x) * tileWidth,
+					Y: float32(y) * tileHeight,
+					//scaling this piece of shit to get rid of the flickering
+					Width:  tileWidth + 0.1,
+					Height: tileHeight + 0.1,
 				}
 
 				rl.DrawTexturePro(
@@ -152,7 +153,7 @@ func main() {
 			0,
 			rl.White,
 		)
-		// rl.DrawRectangleRec(player.Box, rl.Red)
+		rl.DrawRectangleLinesEx(player.Box, 1, rl.Red)
 		rl.DrawCircleV(player.FootPosition, 3, rl.Red)
 		for _, eo := range envObjs {
 			rl.DrawRectangleLinesEx(
