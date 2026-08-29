@@ -140,19 +140,16 @@ func (p *Player) Update(
 		p.Grounded = false
 	}
 	if p.FacingRight {
-		p.FootPosition.X += p.HorSpeed * delta
 		p.HorSpeed += p.DragSpeed * delta
 		if p.HorSpeed <= 0 {
 			p.HorSpeed = 0
 		}
 	} else {
-		p.FootPosition.X += p.HorSpeed * delta
 		p.HorSpeed += -1 * p.DragSpeed * delta
 		if p.HorSpeed >= 0 {
 			p.HorSpeed = 0
 		}
 	}
-
 	if !p.Grounded &&
 		!p.isInActionState() {
 		p.SpriteAnimation.FramePinned = true
@@ -172,43 +169,77 @@ func (p *Player) Update(
 			}
 		}
 	}
-	oldFootY := p.FootPosition.Y
+	oldX := p.Box.X
+	oldY := p.Box.Y
 
 	p.JumpSpeed += p.Gravity * delta
-	p.FootPosition.Y += p.JumpSpeed * delta
+	// p.FootPosition.Y += p.JumpSpeed * delta
+	// p.FootPosition.X += p.HorSpeed * delta
 
-	p.OnGrounded(envObjs, oldFootY)
+	p.Box.X += p.HorSpeed * delta
+	p.Box.Y += p.JumpSpeed * delta
 
-	p.SpriteAnimation.Rect.X = p.FootPosition.X - p.SpriteAnimation.Rect.Width/2
-	p.SpriteAnimation.Rect.Y = p.FootPosition.Y - p.SpriteAnimation.Rect.Height
-	p.Box.X = p.FootPosition.X - 13
-	p.Box.Y = p.FootPosition.Y + -60
+	p.OnContact(envObjs, oldX, oldY)
+
+	//migrated the foot dot to the box
+	p.SpriteAnimation.Rect.X = p.Box.X + p.Box.Width/2 - p.SpriteAnimation.Rect.Width/2
+	p.SpriteAnimation.Rect.Y = p.Box.Y + p.Box.Height + -p.SpriteAnimation.Rect.Height
 }
 
-func (p *Player) OnGrounded(
+var debugInt int
+
+func (p *Player) OnContact(
 	envObjs []EnvironmentObject,
-	oldFootPosY float32,
+	oldX float32,
+	oldY float32,
 ) {
-	if p.HorSpeed == 0 && p.Grounded && !p.SpriteAnimation.OneShot {
-		p.SpriteAnimation.CurrentState = StateIdle
-	}
+	p.Grounded = false
+
 	for _, eo := range envObjs {
+		if !rl.CheckCollisionRecs(p.Box, eo.Rect) {
+			continue
+		}
+
+		oldBottom := oldY + p.Box.Height
+		oldTop := oldY
+		oldRight := oldX + p.Box.Width
+		oldLeft := oldX
+
+		objectTop := eo.Rect.Y
+		objectBottom := eo.Rect.Y + eo.Rect.Height
+		objectLeft := eo.Rect.X
+		objectRight := eo.Rect.X + eo.Rect.Width
+
+		// Falling onto platform
 		if p.JumpSpeed >= 0 &&
+			oldBottom <= objectTop {
 
-			p.FootPosition.X >= eo.Rect.X &&
-			p.FootPosition.X <= eo.Rect.X+eo.Rect.Width &&
-
-			//i dont understand this, its from raylib by examples, ill ponder on it later
-			oldFootPosY <= eo.Rect.Y &&
-			p.FootPosition.Y >= eo.Rect.Y {
-
-			p.JumpSpeed = 0
-			p.FootPosition.Y = eo.Rect.Y
-			p.Grounded = true
-
-			p.SpriteAnimation.FramePinned = false
+			p.Box.Y = objectTop - p.Box.Height
 			p.Gravity = 900
-			p.SpriteAnimation.FrameDuration = 0.099
+			p.JumpSpeed = 0
+			p.Grounded = true
+			p.SpriteAnimation.FramePinned = false
+
+			// Jumping into underside
+		} else if p.JumpSpeed < 0 &&
+			oldTop >= objectBottom {
+
+			p.Box.Y = objectBottom
+			p.JumpSpeed = 0
+
+			// Moving right into wall
+		} else if p.HorSpeed > 0 &&
+			oldRight <= objectLeft {
+
+			p.Box.X = objectLeft - p.Box.Width
+			p.HorSpeed = 0
+
+			// Moving left into wall
+		} else if p.HorSpeed < 0 &&
+			oldLeft >= objectRight {
+
+			p.Box.X = objectRight
+			p.HorSpeed = 0
 		}
 	}
 }

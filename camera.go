@@ -12,7 +12,7 @@ type Camera struct {
 
 func NewCamera(p Player) *Camera {
 	cam := rl.Camera2D{
-		Target: p.FootPosition,
+		Target: rl.NewVector2(p.Box.X, p.Box.Y),
 		Offset: rl.Vector2{
 			X: float32(width) / float32(2),
 			Y: float32(height) / 1.3,
@@ -38,7 +38,7 @@ func (c *Camera) Update(
 	//shitty solution, ill get to do something better eventually
 	left := c.Cam.Target.X - c.Cam.Offset.X - 10/c.Cam.Zoom
 
-	right := c.Cam.Target.X + (float32(width)-c.Cam.Offset.X+10)/c.Cam.Zoom
+	right := c.Cam.Target.X + (float32(width)-c.Cam.Offset.X+12)/c.Cam.Zoom
 
 	// top := c.Cam.Target.Y - c.Cam.Offset.Y/c.Cam.Zoom
 
@@ -51,28 +51,28 @@ func (c *Camera) Update(
 	if !c.EdgeReached {
 		if left <= float32(gameMap.Layers[0].OffsetX) ||
 			right >= float32(gameMap.Layers[0].OffsetX)+float32(gameFullWidth) {
-			edgePosX = p.FootPosition.X
+			edgePosX = p.Box.X + p.Box.Width/2
 			c.EdgeReached = true
 		}
 	}
 	if !c.EdgeReached {
-		c.Cam.Target.X = p.FootPosition.X
+		c.Cam.Target.X = p.Box.X + p.Box.Width/2
 	} else {
 		c.Cam.Target.X = edgePosX
 	}
 
 	if c.EdgeReached &&
-		p.FootPosition.X < center &&
-		p.FootPosition.X > edgePosX {
+		p.Box.X+p.Box.Width/2 < center &&
+		p.Box.X+p.Box.Width/2 > edgePosX {
 		c.EdgeReached = false
 	}
 
 	if c.EdgeReached &&
-		p.FootPosition.X > center &&
-		p.FootPosition.X < edgePosX {
+		p.Box.X+p.Box.Width/2 > center &&
+		p.Box.X+p.Box.Width/2 < edgePosX {
 		c.EdgeReached = false
 	}
 
-	c.Cam.Target.Y = p.FootPosition.Y + 140
+	c.Cam.Target.Y = p.Box.Y + p.Box.Height
 
 }

@@ -14,8 +14,6 @@ const (
 	hor_speed  float32 = 130
 )
 
-var floor int32
-
 func main() {
 
 	rl.InitWindow(width, height, "platformer")
@@ -45,13 +43,19 @@ func main() {
 	}
 	defer rl.UnloadTexture(tilesetTexture)
 
+	playerPos := rl.NewVector2(float32(width)/1.8, float32(height)/6)
 	player := Player{
-		FootPosition: rl.NewVector2(float32(width)/1.8, float32(height)/6),
+		FootPosition: playerPos,
 		Grounded:     false,
 		Gravity:      200,
 		DragSpeed:    -340,
 		FacingRight:  true,
-		Box:          rl.NewRectangle(0, 0, 30, 60),
+		Box: rl.NewRectangle(
+			playerPos.X-13,
+			playerPos.Y-60,
+			30,
+			62,
+		),
 		SpriteAnimation: &SpriteAnimation{
 			StateTextures: map[string][]rl.Texture2D{},
 			CurrentFrame:  0,
@@ -76,7 +80,6 @@ func main() {
 	clouds := InitClouds(gameMap)
 	trees := InitTrees()
 
-	floor = trees.Texture.Height + 93
 	for !rl.WindowShouldClose() {
 		delta := rl.GetFrameTime()
 
@@ -155,13 +158,13 @@ func main() {
 		)
 		rl.DrawRectangleLinesEx(player.Box, 1, rl.Red)
 		rl.DrawCircleV(player.FootPosition, 3, rl.Red)
-		for _, eo := range envObjs {
-			rl.DrawRectangleLinesEx(
-				eo.Rect,
-				1,
-				eo.Color,
-			)
-		}
+		// for _, eo := range envObjs {
+		// 	rl.DrawRectangleLinesEx(
+		// 		eo.Rect,
+		// 		1,
+		// 		eo.Color,
+		// 	)
+		// }
 		rl.EndMode2D()
 		rl.DrawFPS(20, 20)
 
