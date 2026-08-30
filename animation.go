@@ -67,6 +67,7 @@ func (s *SpriteAnimation) Load() {
 		StateCombo1,
 		StateCombo2,
 		StateCombo3,
+		StateSlide,
 	}
 	for _, state := range states {
 		paths := getTextures(state)
@@ -88,6 +89,7 @@ func (s *SpriteAnimation) Unload() {
 		StateCombo1,
 		StateCombo2,
 		StateCombo3,
+		StateSlide,
 	}
 	for _, state := range states {
 		for _, tex := range s.StateTextures[state] {

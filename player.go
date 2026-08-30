@@ -12,6 +12,7 @@ const (
 	StateRun    = "run"
 	StateJump   = "jump"
 	StateDash   = "dash"
+	StateSlide  = "slide"
 	StateCombo1 = "combo1"
 	StateCombo2 = "combo2"
 	StateCombo3 = "combo3"
@@ -52,7 +53,7 @@ func (p *Player) startCombo() {
 
 func (p *Player) isInActionState() bool {
 	cs := p.SpriteAnimation.CurrentState
-	return cs == StateDash || cs == StateCombo1 || cs == StateCombo2 || cs == StateCombo3
+	return cs == StateDash || cs == StateCombo1 || cs == StateCombo2 || cs == StateCombo3 || cs == StateSlide
 }
 
 func (p *Player) isInCombo() bool {
@@ -77,11 +78,16 @@ func (p *Player) Update(
 			p.SpriteAnimation.CurrentState = StateJump
 		}
 	}
-	if p.SpriteAnimation.CurrentState != StateDash {
+	if p.SpriteAnimation.CurrentState != StateDash &&
+		p.SpriteAnimation.CurrentState != StateSlide {
 		if rl.IsKeyDown(rl.KeyL) {
 			p.SpriteAnimation.OneShot = true
 			p.SpriteAnimation.CurrentFrame = 0
-			p.SpriteAnimation.CurrentState = StateDash
+			if p.JumpSpeed != 0 {
+				p.SpriteAnimation.CurrentState = StateDash
+			} else {
+				p.SpriteAnimation.CurrentState = StateSlide
+			}
 			if p.FacingRight {
 				p.HorSpeed = hor_speed * 3.5
 			} else {
@@ -210,7 +216,6 @@ func (p *Player) OnContact(
 		objectLeft := eo.Rect.X
 		objectRight := eo.Rect.X + eo.Rect.Width
 
-		// Falling onto platform
 		if p.JumpSpeed >= 0 &&
 			oldBottom <= objectTop {
 
@@ -220,21 +225,18 @@ func (p *Player) OnContact(
 			p.Grounded = true
 			p.SpriteAnimation.FramePinned = false
 
-			// Jumping into underside
 		} else if p.JumpSpeed < 0 &&
 			oldTop >= objectBottom {
 
 			p.Box.Y = objectBottom
 			p.JumpSpeed = 0
 
-			// Moving right into wall
 		} else if p.HorSpeed > 0 &&
 			oldRight <= objectLeft {
 
 			p.Box.X = objectLeft - p.Box.Width
 			p.HorSpeed = 0
 
-			// Moving left into wall
 		} else if p.HorSpeed < 0 &&
 			oldLeft >= objectRight {
 

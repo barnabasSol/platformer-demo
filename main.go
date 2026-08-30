@@ -44,12 +44,12 @@ func main() {
 	defer rl.UnloadTexture(tilesetTexture)
 
 	playerPos := rl.NewVector2(float32(width)/1.8, float32(height)/6)
+	var players []Player
 	player := Player{
-		FootPosition: playerPos,
-		Grounded:     false,
-		Gravity:      200,
-		DragSpeed:    -340,
-		FacingRight:  true,
+		Grounded:    false,
+		Gravity:     200,
+		DragSpeed:   -340,
+		FacingRight: true,
 		Box: rl.NewRectangle(
 			playerPos.X-13,
 			playerPos.Y-60,
@@ -68,6 +68,31 @@ func main() {
 	}
 	player.SpriteAnimation.Load()
 	player.JumpSpeed = player.Gravity
+	players = append(players, player)
+	antagonist := Player{
+		Grounded:    false,
+		Gravity:     200,
+		DragSpeed:   -340,
+		FacingRight: true,
+		Box: rl.NewRectangle(
+			playerPos.X-13,
+			playerPos.Y-60,
+			30,
+			62,
+		),
+		SpriteAnimation: &SpriteAnimation{
+			StateTextures: map[string][]rl.Texture2D{},
+			CurrentFrame:  0,
+			FrameDuration: 0.099,
+			Timer:         0,
+			Rect:          rl.NewRectangle(0, 0, 512/2.4, 512/2.4),
+			CurrentState:  StateJump,
+			FramePinned:   true,
+		},
+	}
+	antagonist.SpriteAnimation.Load()
+	antagonist.JumpSpeed = player.Gravity
+	players = append(players, antagonist)
 
 	cam := NewCamera(player)
 	defer func() {
@@ -157,7 +182,6 @@ func main() {
 			rl.White,
 		)
 		rl.DrawRectangleLinesEx(player.Box, 1, rl.Red)
-		rl.DrawCircleV(player.FootPosition, 3, rl.Red)
 		// for _, eo := range envObjs {
 		// 	rl.DrawRectangleLinesEx(
 		// 		eo.Rect,

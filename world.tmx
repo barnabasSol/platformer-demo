@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="100" height="30" tilewidth="16" tileheight="16" infinite="0" nextlayerid="11" nextobjectid="10">
+<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="100" height="30" tilewidth="16" tileheight="16" infinite="0" nextlayerid="11" nextobjectid="13">
  <tileset firstgid="1" source="worldtilesets.tsx"/>
  <imagelayer id="3" name="Cloud" offsetx="1256.67" offsety="40.6667">
   <image source="res/day_platformer/PNG/clouds.png" width="459" height="142"/>
@@ -61,5 +61,7 @@
   <object id="7" x="0.25" y="289" width="47" height="190.75"/>
   <object id="8" x="47.75" y="400.75" width="80" height="78.75"/>
   <object id="9" x="1504.63" y="288.5" width="95.25" height="191.25"/>
+  <object id="10" x="-0.242424" y="-351.848" width="10.6667" height="581.667"/>
+  <object id="12" x="1588.65" y="-357.69" width="10.6667" height="581.667"/>
  </objectgroup>
 </map>

@@ -6,8 +6,9 @@ import (
 )
 
 type Camera struct {
-	Cam         rl.Camera2D
-	EdgeReached bool
+	Cam          rl.Camera2D
+	EdgeReached  bool
+	EdgeReachedY bool
 }
 
 func NewCamera(p Player) *Camera {
@@ -25,54 +26,47 @@ func NewCamera(p Player) *Camera {
 	}
 }
 
-var edgePosX float32 = 0
-
 func (c *Camera) Update(
 	p Player,
 	gameMap *tiled.Map,
 	delta float32,
-
 ) {
+	mapLeft := float32(gameMap.Layers[0].OffsetX)
+	mapTop := float32(gameMap.Layers[0].OffsetY)
 
-	//the 10 added/subtracted is to eliminate the extra view that goes beyond the map,
-	//shitty solution, ill get to do something better eventually
-	left := c.Cam.Target.X - c.Cam.Offset.X - 10/c.Cam.Zoom
+	mapWidth := float32(gameMap.Width * gameMap.TileWidth)
+	mapHeight := float32(gameMap.Height * gameMap.TileHeight)
 
-	right := c.Cam.Target.X + (float32(width)-c.Cam.Offset.X+12)/c.Cam.Zoom
+	mapRight := mapLeft + mapWidth
+	mapBottom := mapTop + mapHeight
 
-	// top := c.Cam.Target.Y - c.Cam.Offset.Y/c.Cam.Zoom
+	playerX := p.Box.X + p.Box.Width/2
+	playerY := p.Box.Y + p.Box.Height/2
 
-	// bottom := c.Cam.Target.Y + (float32(height)-c.Cam.Offset.Y)/c.Cam.Zoom
+	targetX := playerX
+	targetY := playerY + 40
 
-	gameFullWidth := gameMap.Width * gameMap.TileWidth
-	// gameFullHeight := gameMap.Height * gameMap.TileHeight
+	leftSpace := c.Cam.Offset.X / c.Cam.Zoom
+	rightSpace := (float32(width) - c.Cam.Offset.X) / c.Cam.Zoom
 
-	center := float32(gameMap.Layers[0].OffsetX) + float32(gameFullWidth)/2
-	if !c.EdgeReached {
-		if left <= float32(gameMap.Layers[0].OffsetX) ||
-			right >= float32(gameMap.Layers[0].OffsetX)+float32(gameFullWidth) {
-			edgePosX = p.Box.X + p.Box.Width/2
-			c.EdgeReached = true
-		}
-	}
-	if !c.EdgeReached {
-		c.Cam.Target.X = p.Box.X + p.Box.Width/2
-	} else {
-		c.Cam.Target.X = edgePosX
+	bottomSpace := (float32(height) - c.Cam.Offset.Y) / c.Cam.Zoom
+
+	if targetX-leftSpace < mapLeft {
+		targetX = mapLeft + leftSpace
 	}
 
-	if c.EdgeReached &&
-		p.Box.X+p.Box.Width/2 < center &&
-		p.Box.X+p.Box.Width/2 > edgePosX {
-		c.EdgeReached = false
+	if targetX+rightSpace > mapRight {
+		targetX = mapRight - rightSpace
 	}
 
-	if c.EdgeReached &&
-		p.Box.X+p.Box.Width/2 > center &&
-		p.Box.X+p.Box.Width/2 < edgePosX {
-		c.EdgeReached = false
+	// if targetY-topSpace < mapTop {
+	// 	targetY = mapTop + topSpace
+	// }
+
+	if targetY+bottomSpace > mapBottom {
+		targetY = mapBottom - bottomSpace
 	}
 
-	c.Cam.Target.Y = p.Box.Y + p.Box.Height
-
+	c.Cam.Target.X = targetX
+	c.Cam.Target.Y = targetY
 }

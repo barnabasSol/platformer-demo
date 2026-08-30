@@ -5,11 +5,11 @@
     ],
     "fileStates": {
         "world.tmx": {
-            "scale": 0.75,
-            "selectedLayer": 6,
+            "scale": 1,
+            "selectedLayer": 7,
             "viewCenter": {
-                "x": 645.9999999999999,
-                "y": 281.33333333333326
+                "x": 1459.5,
+                "y": 56
             }
         },
         "worldtilesets.tsx": {
