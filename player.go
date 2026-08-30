@@ -245,3 +245,18 @@ func (p *Player) OnContact(
 		}
 	}
 }
+
+func (p Player) Draw() {
+	spriteCurrentState := p.SpriteAnimation.CurrentState
+	currentFrame := p.SpriteAnimation.CurrentFrame
+	currentTex := p.SpriteAnimation.StateTextures[spriteCurrentState]
+	rl.DrawTexturePro(
+		currentTex[currentFrame],
+		p.SpriteAnimation.Src,
+		p.SpriteAnimation.Dst,
+		rl.Vector2{},
+		0,
+		rl.White,
+	)
+
+}
