@@ -57,6 +57,40 @@ func (s *SpriteAnimation) Update(
 	s.Dst = dst
 }
 
+func (s *SpriteAnimation) UpdateAntagonist(
+	delta float32,
+	player *Antagonist,
+) {
+	s.Timer += delta
+	var srcRectWidth float32
+	if player.FacingRight {
+		srcRectWidth = float32(s.StateTextures[s.CurrentState][s.CurrentFrame].Width)
+	} else {
+		srcRectWidth = -float32(s.StateTextures[s.CurrentState][s.CurrentFrame].Width)
+	}
+	src := rl.Rectangle{
+		X:      0,
+		Y:      0,
+		Width:  srcRectWidth,
+		Height: float32(s.StateTextures[s.CurrentState][s.CurrentFrame].Height),
+	}
+
+	s.Src = src
+
+	dst := s.Rect
+	if !s.FramePinned && s.Timer >= s.FrameDuration {
+		if s.OneShot &&
+			s.CurrentFrame == len(s.StateTextures[s.CurrentState])-1 {
+			s.OneShot = false
+			s.CurrentState = StateIdle
+		} else {
+			s.CurrentFrame = (s.CurrentFrame + 1) % len(s.StateTextures[s.CurrentState])
+			s.Timer = 0
+		}
+	}
+	dst.Y += 56
+	s.Dst = dst
+}
 func (s *SpriteAnimation) Load() {
 	states := []string{
 		StateIdle,

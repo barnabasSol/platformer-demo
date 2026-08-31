@@ -66,12 +66,36 @@ func main() {
 		},
 	}
 	player.SpriteAnimation.Load()
-	player.JumpSpeed = player.Gravity
+	player.JumpSpeed = 0
 
+	antagonistPos := rl.NewVector2(float32(width)/1.3, float32(height)/6)
+	antagonist := Antagonist{
+		Grounded:    false,
+		Gravity:     200,
+		FacingRight: false,
+		Box: rl.NewRectangle(
+			antagonistPos.X-13,
+			antagonistPos.Y-60,
+			30,
+			62,
+		),
+		SpriteAnimation: &SpriteAnimation{
+			StateTextures: map[string][]rl.Texture2D{},
+			CurrentFrame:  0,
+			FrameDuration: 0.099,
+			Timer:         0,
+			Rect:          rl.NewRectangle(0, 0, 512/2.4, 512/2.4),
+			CurrentState:  StateJump,
+			FramePinned:   true,
+		},
+	}
+	antagonist.SpriteAnimation.Load()
+	antagonist.JumpSpeed = 0
 	cam := NewCamera(player)
 	defer func() {
 		rl.CloseWindow()
 		player.SpriteAnimation.Unload()
+		antagonist.SpriteAnimation.Unload()
 	}()
 	rl.SetTargetFPS(60)
 
@@ -82,14 +106,22 @@ func main() {
 	for !rl.WindowShouldClose() {
 		delta := rl.GetFrameTime()
 
+		//player stuff
 		player.Update(delta, envObjs)
 		player.SpriteAnimation.Update(delta, &player)
 
 		spriteCurrentState := player.SpriteAnimation.CurrentState
 		currentFrame := player.SpriteAnimation.CurrentFrame
 		currentTex := player.SpriteAnimation.StateTextures[spriteCurrentState]
-
 		cam.Update(player, gameMap, delta)
+
+		//antagonist stuff
+		antagonist.Update(delta, envObjs)
+		antagonist.SpriteAnimation.UpdateAntagonist(delta, &antagonist)
+
+		antagSpriteCurrentState := antagonist.SpriteAnimation.CurrentState
+		antagCurrentFrame := antagonist.SpriteAnimation.CurrentFrame
+		antagCurrentTex := antagonist.SpriteAnimation.StateTextures[antagSpriteCurrentState]
 
 		rl.BeginDrawing()
 		rl.ClearBackground(rl.SkyBlue)
@@ -155,7 +187,16 @@ func main() {
 			0,
 			rl.White,
 		)
-		rl.DrawRectangleLinesEx(player.Box, 1, rl.Red)
+		rl.DrawTexturePro(
+			antagCurrentTex[antagCurrentFrame],
+			antagonist.SpriteAnimation.Src,
+			antagonist.SpriteAnimation.Dst,
+			rl.Vector2{},
+			0,
+			rl.Red,
+		)
+		rl.DrawRectangleLinesEx(player.Box, 1, rl.Yellow)
+		rl.DrawRectangleLinesEx(antagonist.Box, 1, rl.Red)
 		// for _, eo := range envObjs {
 		// 	rl.DrawRectangleLinesEx(
 		// 		eo.Rect,
