@@ -3,12 +3,16 @@ package main
 import rl "github.com/gen2brain/raylib-go/raylib"
 
 type Antagonist struct {
-	Box             rl.Rectangle
-	JumpSpeed       float32
-	FacingRight     bool
-	SpriteAnimation *SpriteAnimation
-	Grounded        bool
-	Gravity         float32
+	Box                  rl.Rectangle
+	JumpSpeed            float32
+	FacingRight          bool
+	SpriteAnimation      *SpriteAnimation
+	Grounded             bool
+	Gravity              float32
+	IsStunned            bool
+	IsDown               bool
+	ComboHitCounter      int
+	ComboHitResetCounter float32
 }
 
 func (p *Antagonist) Update(

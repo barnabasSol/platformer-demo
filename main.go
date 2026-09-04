@@ -8,10 +8,11 @@ import (
 )
 
 const (
-	width      int32   = 800
-	height     int32   = 450
-	jump_speed float32 = -600
-	hor_speed  float32 = 130
+	width               int32   = 800
+	height              int32   = 450
+	jump_speed          float32 = -600
+	hor_speed           float32 = 130
+	attack_point_offset         = 14
 )
 
 func main() {
@@ -44,17 +45,22 @@ func main() {
 	defer rl.UnloadTexture(tilesetTexture)
 
 	playerPos := rl.NewVector2(float32(width)/1.8, float32(height)/6)
+	boxRect := rl.NewRectangle(
+		playerPos.X,
+		playerPos.Y,
+		30,
+		62,
+	)
 	player := Player{
+		AttackPoint: rl.NewVector2(
+			boxRect.X+boxRect.Width+attack_point_offset,
+			boxRect.Y+boxRect.Height/2,
+		),
 		Grounded:    false,
 		Gravity:     200,
 		DragSpeed:   -340,
 		FacingRight: true,
-		Box: rl.NewRectangle(
-			playerPos.X-13,
-			playerPos.Y-60,
-			30,
-			62,
-		),
+		Box:         boxRect,
 		SpriteAnimation: &SpriteAnimation{
 			StateTextures: map[string][]rl.Texture2D{},
 			CurrentFrame:  0,
@@ -135,49 +141,7 @@ func main() {
 			)
 		}
 		trees.DrawTrees(gameMap)
-		for y := 0; y < gameMap.Height; y++ {
-			for x := 0; x < gameMap.Width; x++ {
-
-				tile := layer.Tiles[y*gameMap.Width+x]
-
-				if tile == nil {
-					continue
-				}
-
-				localID := int(tile.ID)
-
-				if localID == 0 {
-					continue
-				}
-
-				tileX := localID % tilesetColumns
-				tileY := localID / tilesetColumns
-
-				source := rl.Rectangle{
-					X:      float32(tileX) * tileWidth,
-					Y:      float32(tileY) * tileHeight,
-					Width:  tileWidth,
-					Height: tileHeight,
-				}
-
-				destination := rl.Rectangle{
-					X: float32(x) * tileWidth,
-					Y: float32(y) * tileHeight,
-					//scaling this piece of shit to get rid of the flickering
-					Width:  tileWidth + 0.1,
-					Height: tileHeight + 0.1,
-				}
-
-				rl.DrawTexturePro(
-					tilesetTexture,
-					source,
-					destination,
-					rl.Vector2{},
-					0,
-					rl.White,
-				)
-			}
-		}
+		renderMap(gameMap, layer, tilesetTexture)
 
 		rl.DrawTexturePro(
 			currentTex[currentFrame],
@@ -197,6 +161,7 @@ func main() {
 		)
 		rl.DrawRectangleLinesEx(player.Box, 1, rl.Yellow)
 		rl.DrawRectangleLinesEx(antagonist.Box, 1, rl.Red)
+		rl.DrawCircle(int32(player.AttackPoint.X), int32(player.AttackPoint.Y), 3, rl.Red)
 		// for _, eo := range envObjs {
 		// 	rl.DrawRectangleLinesEx(
 		// 		eo.Rect,
@@ -208,5 +173,51 @@ func main() {
 		rl.DrawFPS(20, 20)
 
 		rl.EndDrawing()
+	}
+}
+
+func renderMap(gameMap *tiled.Map, layer *tiled.Layer, tilesetTexture rl.Texture2D) {
+	for y := 0; y < gameMap.Height; y++ {
+		for x := 0; x < gameMap.Width; x++ {
+
+			tile := layer.Tiles[y*gameMap.Width+x]
+
+			if tile == nil {
+				continue
+			}
+
+			localID := int(tile.ID)
+
+			if localID == 0 {
+				continue
+			}
+
+			tileX := localID % tilesetColumns
+			tileY := localID / tilesetColumns
+
+			source := rl.Rectangle{
+				X:      float32(tileX) * tileWidth,
+				Y:      float32(tileY) * tileHeight,
+				Width:  tileWidth,
+				Height: tileHeight,
+			}
+
+			destination := rl.Rectangle{
+				X: float32(x) * tileWidth,
+				Y: float32(y) * tileHeight,
+				//scaling this piece of shit to get rid of the flickering
+				Width:  tileWidth + 0.1,
+				Height: tileHeight + 0.1,
+			}
+
+			rl.DrawTexturePro(
+				tilesetTexture,
+				source,
+				destination,
+				rl.Vector2{},
+				0,
+				rl.White,
+			)
+		}
 	}
 }

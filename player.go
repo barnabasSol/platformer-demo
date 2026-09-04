@@ -2,6 +2,7 @@ package main
 
 import (
 	"strconv"
+	"strings"
 
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
@@ -31,8 +32,22 @@ type Player struct {
 	ComboCounter      int
 	ComboResetCounter float32
 	NextComboQueued   bool
+	AttackPoint       rl.Vector2
 }
 
+func (p *Player) HandleOnAttackContactFrame() {
+	if strings.HasPrefix(p.SpriteAnimation.CurrentState, "combo") &&
+		p.SpriteAnimation.Timer == 0 {
+		if p.ComboCounter == 1 && p.SpriteAnimation.CurrentFrame == 1 {
+			println("CONTACT JAB")
+		} else if p.ComboCounter == 2 && p.SpriteAnimation.CurrentFrame == 2 {
+			println("CONTACT LEG")
+		} else if p.ComboCounter == 3 && p.SpriteAnimation.CurrentFrame == 4 {
+			println("CONTACT PUNCH")
+		}
+	}
+
+}
 func (p *Player) startCombo() {
 	p.ComboCounter += 1
 	if p.ComboCounter > 3 {
@@ -80,7 +95,7 @@ func (p *Player) Update(
 	}
 	if p.SpriteAnimation.CurrentState != StateDash &&
 		p.SpriteAnimation.CurrentState != StateSlide {
-		if rl.IsKeyDown(rl.KeyL) {
+		if rl.IsKeyPressed(rl.KeyL) {
 			p.SpriteAnimation.OneShot = true
 			p.SpriteAnimation.CurrentFrame = 0
 			if p.JumpSpeed != 0 {
@@ -101,6 +116,7 @@ func (p *Player) Update(
 				p.startCombo()
 			}
 		}
+		p.HandleOnAttackContactFrame()
 		if rl.IsKeyDown(rl.KeyD) &&
 			rl.IsKeyDown(rl.KeyLeftShift) &&
 			!rl.IsKeyDown(rl.KeyL) &&
@@ -184,6 +200,14 @@ func (p *Player) Update(
 
 	p.Box.X += p.HorSpeed * delta
 	p.Box.Y += p.JumpSpeed * delta
+
+	if p.FacingRight {
+		p.AttackPoint.X = p.Box.X + p.Box.Width + attack_point_offset
+	} else {
+		p.AttackPoint.X = p.Box.X - attack_point_offset
+	}
+
+	p.AttackPoint.Y = p.Box.Y + p.Box.Height/2
 
 	p.OnContact(envObjs, oldX, oldY)
 
